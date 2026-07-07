@@ -5,48 +5,39 @@ app_description = "Accounting Egypt Customizations"
 app_email = "ezzat.azab@our-edu.net"
 app_license = "mit"
 
-# Apps
-# ------------------
-
-# required_apps = []
-
-# Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "acc_egypt_cust",
-# 		"logo": "/assets/acc_egypt_cust/logo.png",
-# 		"title": "Acc Egypt Cust",
-# 		"route": "/acc_egypt_cust",
-# 		"has_permission": "acc_egypt_cust.api.permission.has_app_permission"
-# 	}
-# ]
+# Fixtures
+# --------
+fixtures = [
+    {
+        "dt": "Print Format",
+        "filters": [
+            ["module", "in", [
+                "Acc Egypt Cust",
+            ]]
+        ]
+    },
+]
 
 # Includes in <head>
 # ------------------
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/acc_egypt_cust/css/acc_egypt_cust.css"
-# app_include_js = "/assets/acc_egypt_cust/js/acc_egypt_cust.js"
-
-# include js, css files in header of web template
-# web_include_css = "/assets/acc_egypt_cust/css/acc_egypt_cust.css"
-# web_include_js = "/assets/acc_egypt_cust/js/acc_egypt_cust.js"
-
-# include custom scss in every website theme (without file extension ".scss")
-# website_theme_scss = "acc_egypt_cust/public/scss/website"
-
-# include js, css files in header of web form
-# webform_include_js = {"doctype": "public/js/doctype.js"}
-# webform_include_css = {"doctype": "public/css/doctype.css"}
-
-# include js in page
-# page_js = {"page" : "public/js/file.js"}
+app_include_js = [
+    "/assets/acc_egypt_cust/js/trial_balance.js",
+    "/assets/acc_egypt_cust/js/gl_ledger_custom.js",
+    "/assets/acc_egypt_cust/js/bank_reconciliation_report.js",
+    "/assets/acc_egypt_cust/js/ledger_prompt.js",
+]
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
-# doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
-# doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
+doctype_js = {
+    "Journal Entry": "public/js/journal_entry_upload.js",
+    "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
+}
+doctype_list_js = {
+    "Journal Entry": "public/js/journal_entry.js"
+}
 
 # Svg Icons
 # ------------------
@@ -134,17 +125,32 @@ app_license = "mit"
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
 
+# DocType Class
+# ---------------
+# Override standard doctype classes
+
+override_doctype_class = {
+    "Journal Entry": "acc_egypt_cust.overrides.journal_entry_class.CustomJournalEntry",
+}
+
 # Document Events
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "GL Entry": {
+        "validate": "acc_egypt_cust.overrides.gl_entry.validate",
+    },
+    # Bank Reconciliation Row-Level Matching: Allow same JE with different rows
+    "Bank Transaction": {
+        "before_validate": "acc_egypt_cust.overrides.bank_reconciliation.validate_je_row_duplicates",
+    },
+    "Journal Entry": {
+        "before_validate": "acc_egypt_cust.overrides.journal_entry.sync_custom_party_to_party",
+        "after_insert": "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
+        "on_update": "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
@@ -182,17 +188,30 @@ app_license = "mit"
 
 # Overriding Methods
 # ------------------------------
-#
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "acc_egypt_cust.event.get_events"
-# }
-#
-# each overriding function accepts a `data` argument;
-# generated from the base implementation of the doctype dashboard,
-# along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "acc_egypt_cust.task.get_dashboard_data"
-# }
+
+# Bank Reconciliation Row-Level Matching Overrides
+override_whitelisted_methods = {
+    # Replace get_linked_payments to handle JE rows separately
+    "erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool.get_linked_payments":
+        "acc_egypt_cust.overrides.bank_reconciliation.custom_get_linked_payments",
+
+    # Replace reconcile_vouchers to store row identifiers
+    "erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool.reconcile_vouchers":
+        "acc_egypt_cust.overrides.bank_reconciliation.custom_reconcile_vouchers",
+
+    # Replace auto_reconcile_vouchers to use our custom matching and reconciliation
+    "erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool.auto_reconcile_vouchers":
+        "acc_egypt_cust.overrides.bank_reconciliation.custom_auto_reconcile_vouchers",
+
+    # Inject Purchase Invoice title into GL report remarks for supplier entries
+    "frappe.desk.query_report.run":
+        "acc_egypt_cust.overrides.general_ledger_report.run",
+}
+
+# Bank Reconciliation Statement Report - Add Bank Transaction entries
+get_entries_for_bank_reconciliation_statement = [
+    "acc_egypt_cust.overrides.bank_reconciliation.get_bank_transaction_entries_for_reconciliation_statement"
+]
 
 # exempt linked doctypes from being automatically cancelled
 #
