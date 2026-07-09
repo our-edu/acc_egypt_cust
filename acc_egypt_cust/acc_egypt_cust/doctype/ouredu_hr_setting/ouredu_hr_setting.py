@@ -10,7 +10,7 @@ from frappe.model.document import Document
 from frappe.utils import getdate, get_datetime
 from hrms.hr.doctype.attendance.attendance import get_unmarked_days
 from hrms.hr.doctype.shift_assignment.shift_assignment import get_shifts_for_date
-from hr_cust.doc_events.attendance import employee_has_checkins_for_attendance_day
+from acc_egypt_cust.acc_egypt_cust.doc_events.attendance import employee_has_checkins_for_attendance_day
 from frappe.core.doctype.data_import.data_import import import_doc
 import click
 import os
@@ -181,14 +181,14 @@ def make_attendance(doc):
 @frappe.whitelist()
 def import_doc_by_csv(name_of_doctype:str="") :
     if name_of_doctype :
-        path_of_file = frappe.get_app_path("hr_cust" ,"files/" + "{}.json".format("_".join(name_of_doctype.split(" ")) ))
+        path_of_file = frappe.get_app_path("acc_egypt_cust" ,"files/" + "{}.json".format("_".join(name_of_doctype.split(" ")) ))
         import_doc(path_of_file)
         frappe.db.commit()
     
     else :
-        all_files_in_folders = os.listdir( frappe.get_app_path("hr_cust" ,"files"))
+        all_files_in_folders = os.listdir( frappe.get_app_path("acc_egypt_cust" ,"files"))
         click.secho("Install Doctypes From Files  => {}".format( " ,".join(all_files_in_folders)), fg="green")
         for file in all_files_in_folders:
-            import_doc(frappe.get_app_path("hr_cust" ,"files/" + f"{file}"))
+            import_doc(frappe.get_app_path("acc_egypt_cust" ,"files/" + f"{file}"))
             frappe.db.commit()
 
