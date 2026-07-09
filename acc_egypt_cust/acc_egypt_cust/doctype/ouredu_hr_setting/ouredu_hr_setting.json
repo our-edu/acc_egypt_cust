@@ -1,0 +1,656 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "autoname": "field:company",
+ "creation": "2024-10-08 10:54:53.837710",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "gratuity_setting_tab",
+  "allow_to_edit_start_work_date",
+  "allow_to_edit_total_salary",
+  "allow_to_edit_last_work_days_salary",
+  "allow_to_edit_outstanding_leave_amount",
+  "allow_to_edit_employee_advance_amount",
+  "column_break_odfc",
+  "company",
+  "default_travel_ticket_type",
+  "section_break_uzfw",
+  "required_allowance",
+  "last_work_days_salary_section",
+  "component_to_calculate_cost_of_day",
+  "payroll_date_beginning",
+  "column_break_htqo",
+  "component_to_calculate_cost_of_day_for_leaves",
+  "leave_type",
+  "employee_advance_section",
+  "employee_advance_account",
+  "leave_due_settings_tab",
+  "leave_dues_fields",
+  "is_leave_policy_mandatory_in_employee",
+  "create_leave_policy_assignment_on_joining_date",
+  "submit_leave_policy",
+  "attendance_setting_tab",
+  "enable_shift_duration",
+  "enable_standard_shift",
+  "enable_add_deduction_for_checkin_late",
+  "enable_add_deduction_for_checkout_early",
+  "submit_new_employee_shift_assignment",
+  "column_break_jorv",
+  "default_salary_component_for_deduction",
+  "default_salary_component_for_check_in_late",
+  "default_salary_component_for_check_out_early",
+  "enable_add_overtime_to_employee",
+  "default_salary_component_for_over_time",
+  "section_break_bmzs",
+  "employee_salary",
+  "column_break_eikd",
+  "enable_shift_types",
+  "section_break_bgol",
+  "skip_employee",
+  "skip_employee_in_attendance",
+  "column_break_tsia",
+  "make_attendance",
+  "skip_employee_data_range",
+  "skip_employee_from_date",
+  "skip_employee_to_date",
+  "section_break_pmrt",
+  "make_absent_for_unmark_attendance",
+  "set_emplyee_absent",
+  "column_break_cozz",
+  "making_absent",
+  "date_range",
+  "to_date",
+  "from_date",
+  "permissions_tab",
+  "enable_calculate_permission_by_number",
+  "enable_calculate_permission_by_hours",
+  "enable_add_deduction_after_permissions__number_allowed",
+  "enable_add_deduction_after_permissions__hours_allowed",
+  "column_break_mkip",
+  "allowed_permission_numbers",
+  "allowed_permission_hours",
+  "default_salary_component_for_permissions",
+  "default_permissions_per_day",
+  "section_break_ibzk",
+  "salary_component_for_deduction",
+  "penalty_tab",
+  "default_salary_component_for_employee_penalty",
+  "column_break_wfsf",
+  "penalty_component",
+  "payroll_tab",
+  "allow_to_edit_salary_slip_component",
+  "make_draft_journal_entry_for_payable_payroll",
+  "components_accounts_distribution_per_party_in_payable_payroll",
+  "salary_effect_tab",
+  "effect_in_salary_in_journal_entry",
+  "effect_in_salary_in_additional_salary",
+  "credit_account_in_journal_entry",
+  "loan_tab",
+  "show_loan_request_in_portal",
+  "employee_loan_account",
+  "max_no_of_installments",
+  "max_noof_employee_loan",
+  "salary_component_for_installment"
+ ],
+ "fields": [
+  {
+   "fieldname": "gratuity_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "End of service benefits"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_total_salary",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Total Salary"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_start_work_date",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Start Work Date"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_outstanding_leave_amount",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Outstanding Leave Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_employee_advance_amount",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Employee Advance Amount"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_last_work_days_salary",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Last Work Days Salary"
+  },
+  {
+   "fieldname": "employee_advance_section",
+   "fieldtype": "Section Break",
+   "label": "Employee Advance"
+  },
+  {
+   "fieldname": "employee_advance_account",
+   "fieldtype": "Link",
+   "label": "Employee Advance Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "leave_due_settings_tab",
+   "fieldtype": "Tab Break",
+   "label": "Leave Due"
+  },
+  {
+   "description": "\nThese are the required components to clac the the cost of day for all Add or Deduction Components",
+   "fieldname": "leave_dues_fields",
+   "fieldtype": "Table",
+   "label": "Leave Dues Fields",
+   "options": "Salary Component Fields"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_leave_policy_mandatory_in_employee",
+   "fieldtype": "Check",
+   "label": "Is Leave Policy Mandatory in Employee"
+  },
+  {
+   "default": "1",
+   "fieldname": "create_leave_policy_assignment_on_joining_date",
+   "fieldtype": "Check",
+   "label": "Create Leave Policy Assignment on Joining Date"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.create_leave_policy_assignment_on_joining_date == 1",
+   "fieldname": "submit_leave_policy",
+   "fieldtype": "Check",
+   "label": "Submit Leave Policy Assignment"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_odfc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_uzfw",
+   "fieldtype": "Section Break",
+   "label": "Employee Salary Allowance"
+  },
+  {
+   "fieldname": "required_allowance",
+   "fieldtype": "Table",
+   "label": "Required Allowance",
+   "options": "Salary Component Fields"
+  },
+  {
+   "fieldname": "last_work_days_salary_section",
+   "fieldtype": "Section Break",
+   "label": "Last Work Days Salary - Outstanding Leaves"
+  },
+  {
+   "description": "This Field also Used in permission",
+   "fieldname": "payroll_date_beginning",
+   "fieldtype": "Date",
+   "label": "Payroll Date Beginning ",
+   "reqd": 1
+  },
+  {
+   "fieldname": "component_to_calculate_cost_of_day",
+   "fieldtype": "Table",
+   "label": "Component to Calculate Cost of Day",
+   "options": "Salary Component Fields"
+  },
+  {
+   "fieldname": "leave_type",
+   "fieldtype": "Link",
+   "label": "Leave Type",
+   "options": "Leave Type"
+  },
+  {
+   "fieldname": "component_to_calculate_cost_of_day_for_leaves",
+   "fieldtype": "Table",
+   "label": "Component to Calculate Cost of Day for Leaves",
+   "options": "Salary Component Fields"
+  },
+  {
+   "fieldname": "column_break_htqo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attendance_setting_tab",
+   "fieldtype": "Tab Break",
+   "label": "Attendance"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_shift_duration",
+   "fieldtype": "Check",
+   "label": "Enable Shift Duration"
+  },
+  {
+   "fieldname": "section_break_bmzs",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval: doc.enable_shift_duration",
+   "description": "For Shift Duration Mode , Select the Required Shift and set the duration and that is the base of accounting for Add and Deduction\n",
+   "fieldname": "enable_shift_types",
+   "fieldtype": "Table",
+   "label": "Enable Shift Types",
+   "mandatory_depends_on": "eval: doc.enable_shift_duration",
+   "options": "Enable Shift Types"
+  },
+  {
+   "depends_on": "eval: doc.make_absent_for_unmark_attendance",
+   "fieldname": "set_emplyee_absent",
+   "fieldtype": "Table",
+   "label": "Set Employee Absent",
+   "options": "Set Employee Absent"
+  },
+  {
+   "depends_on": "eval: doc.skip_employee",
+   "fieldname": "skip_employee_in_attendance",
+   "fieldtype": "Table",
+   "label": "Skip Employee In Attendance",
+   "options": "Set Employee Absent"
+  },
+  {
+   "depends_on": "eval:doc.date_range == 1 && doc.make_absent_for_unmark_attendance",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory_depends_on": "eval:doc.date_range == 1"
+  },
+  {
+   "depends_on": "eval:doc.date_range && doc.make_absent_for_unmark_attendance",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory_depends_on": "eval:doc.date_range == 1"
+  },
+  {
+   "fieldname": "section_break_pmrt",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "make_absent_for_unmark_attendance",
+   "fieldtype": "Check",
+   "label": "Make Absent For Unmark Attendance."
+  },
+  {
+   "fieldname": "section_break_bgol",
+   "fieldtype": "Section Break",
+   "hide_border": 1,
+   "label": "Exceptions for Auto Attendance"
+  },
+  {
+   "depends_on": "eval: doc.make_absent_for_unmark_attendance",
+   "fieldname": "making_absent",
+   "fieldtype": "Button",
+   "label": "Making Absent"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.make_absent_for_unmark_attendance",
+   "description": "If disabled, this will calculate from the beginning of the month.",
+   "fieldname": "date_range",
+   "fieldtype": "Check",
+   "label": "Date Range?"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_standard_shift",
+   "fieldname": "enable_add_deduction_for_checkin_late",
+   "fieldtype": "Check",
+   "label": "Enable Add Deduction For Checkin Late"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_standard_shift",
+   "fieldname": "enable_add_deduction_for_checkout_early",
+   "fieldtype": "Check",
+   "label": "Enable Add Deduction For Checkout Early"
+  },
+  {
+   "fieldname": "column_break_jorv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.enable_add_deduction_for_checkin_late && doc.enable_standard_shift",
+   "fieldname": "default_salary_component_for_check_in_late",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Check in Late",
+   "mandatory_depends_on": "eval: doc.enable_add_deduction_for_checkin_late && doc.enable_standard_shift",
+   "options": "Salary Component"
+  },
+  {
+   "depends_on": "eval: doc.enable_add_deduction_for_checkout_early && doc.enable_standard_shift",
+   "fieldname": "default_salary_component_for_check_out_early",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Check Out Early",
+   "mandatory_depends_on": "eval: doc.enable_add_deduction_for_checkout_early && doc.enable_standard_shift",
+   "options": "Salary Component"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_standard_shift",
+   "fieldname": "enable_add_overtime_to_employee",
+   "fieldtype": "Check",
+   "label": "Enable Add Overtime To Employee"
+  },
+  {
+   "depends_on": "eval: doc.enable_shift_duration == 1 || (doc.enable_standard_shift && doc.enable_add_overtime_to_employee)",
+   "fieldname": "default_salary_component_for_over_time",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Over Time",
+   "mandatory_depends_on": "eval: doc.enable_shift_duration == 1 || (doc.enable_standard_shift && doc.enable_add_overtime_to_employee)",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "column_break_eikd",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "\nThese are the required components to clac the the cost of day for all Add or Deduction Components",
+   "fieldname": "employee_salary",
+   "fieldtype": "Table",
+   "label": "Employee Salary",
+   "options": "Salary Component Fields",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.enable_shift_duration == 1 ",
+   "fieldname": "default_salary_component_for_deduction",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Deduction",
+   "mandatory_depends_on": "eval: doc.enable_shift_duration == 1 ",
+   "options": "Salary Component"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_standard_shift",
+   "fieldtype": "Check",
+   "label": "Enable Standard Shift"
+  },
+  {
+   "default": "0",
+   "fieldname": "skip_employee",
+   "fieldtype": "Check",
+   "label": "Skip Employee In Attendance"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.skip_employee",
+   "description": "If disabled, this will calculate from the beginning of the month.",
+   "fieldname": "skip_employee_data_range",
+   "fieldtype": "Check",
+   "label": "Date Range"
+  },
+  {
+   "depends_on": "eval: doc.skip_employee_data_range && doc.skip_employee",
+   "fieldname": "skip_employee_from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory_depends_on": "eval: doc.skip_employee_data_range && doc.skip_employee"
+  },
+  {
+   "depends_on": "eval: doc.skip_employee_data_range && doc.skip_employee",
+   "fieldname": "skip_employee_to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory_depends_on": "eval: doc.skip_employee_data_range && doc.skip_employee"
+  },
+  {
+   "fieldname": "column_break_tsia",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.skip_employee;",
+   "fieldname": "make_attendance",
+   "fieldtype": "Button",
+   "label": "Make Attendance"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_to_edit_salary_slip_component",
+   "fieldtype": "Check",
+   "label": "Allow To Edit Salary Slip Component"
+  },
+  {
+   "fieldname": "permissions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Permissions"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_calculate_permission_by_hours == 0",
+   "fieldname": "enable_calculate_permission_by_number",
+   "fieldtype": "Check",
+   "label": "Enable Calculate Permission By Number"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_calculate_permission_by_number == 0",
+   "fieldname": "enable_calculate_permission_by_hours",
+   "fieldtype": "Check",
+   "label": "Enable Calculate Permission By Hours"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_calculate_permission_by_number",
+   "fieldname": "enable_add_deduction_after_permissions__number_allowed",
+   "fieldtype": "Check",
+   "label": "Enable Add Deduction After Permissions  Number Allowed"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.enable_calculate_permission_by_hours",
+   "fieldname": "enable_add_deduction_after_permissions__hours_allowed",
+   "fieldtype": "Check",
+   "label": "Enable Add Deduction After Permissions  Hours Allowed"
+  },
+  {
+   "fieldname": "column_break_mkip",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.enable_calculate_permission_by_number",
+   "fieldname": "allowed_permission_numbers",
+   "fieldtype": "Int",
+   "label": "Allowed Permission Numbers per month",
+   "mandatory_depends_on": "eval: doc.enable_calculate_permission_by_number"
+  },
+  {
+   "depends_on": "eval: doc.enable_calculate_permission_by_hours",
+   "fieldname": "allowed_permission_hours",
+   "fieldtype": "Time",
+   "label": "Allowed Permission Hours per month",
+   "mandatory_depends_on": "eval: doc.enable_calculate_permission_by_hours"
+  },
+  {
+   "depends_on": "eval: doc.enable_add_deduction_after_permissions__number_allowed || doc.enable_add_deduction_after_permissions__hours_allowed",
+   "fieldname": "default_salary_component_for_permissions",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Permissions",
+   "mandatory_depends_on": "eval: doc.enable_add_deduction_after_permissions__number_allowed || doc.enable_add_deduction_after_permissions__hours_allowed",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "section_break_ibzk",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "penalty_tab",
+   "fieldtype": "Tab Break",
+   "label": "Penalty"
+  },
+  {
+   "fieldname": "penalty_component",
+   "fieldtype": "Table",
+   "label": "Penalty Component",
+   "options": "Salary Component Fields"
+  },
+  {
+   "fieldname": "default_salary_component_for_employee_penalty",
+   "fieldtype": "Link",
+   "label": "Default Salary Component For Employee Penalty",
+   "options": "Salary Component"
+  },
+  {
+   "fieldname": "column_break_wfsf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "default_permissions_per_day",
+   "fieldtype": "Int",
+   "label": "Default Permissions per Day"
+  },
+  {
+   "description": "\nThese are the required components to clac the the cost of day for all Add or Deduction Components",
+   "fieldname": "salary_component_for_deduction",
+   "fieldtype": "Table",
+   "label": "Salary Component for Deduction",
+   "options": "Salary Component Fields"
+  },
+  {
+   "fieldname": "column_break_cozz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payroll_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payroll"
+  },
+  {
+   "default": "0",
+   "fieldname": "make_draft_journal_entry_for_payable_payroll",
+   "fieldtype": "Check",
+   "label": "Make Draft Journal Entry For Payable Payroll"
+  },
+  {
+   "default": "0",
+   "fieldname": "components_accounts_distribution_per_party_in_payable_payroll",
+   "fieldtype": "Check",
+   "label": "Components Accounts Distribution Per Party in Payable Payroll"
+  },
+  {
+   "fieldname": "default_travel_ticket_type",
+   "fieldtype": "Link",
+   "label": "Default Travel Ticket Type",
+   "options": "Travel Ticket Type"
+  },
+  {
+   "fieldname": "salary_effect_tab",
+   "fieldtype": "Tab Break",
+   "label": "Salary Effect"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.effect_in_salary_in_additional_salary ==0",
+   "fieldname": "effect_in_salary_in_journal_entry",
+   "fieldtype": "Check",
+   "label": "Effect in Salary in Journal Entry"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval: doc.effect_in_salary_in_journal_entry ==0",
+   "fieldname": "effect_in_salary_in_additional_salary",
+   "fieldtype": "Check",
+   "label": "Effect in Salary in Additional Salary"
+  },
+  {
+   "depends_on": "eval: doc.effect_in_salary_in_journal_entry",
+   "fieldname": "credit_account_in_journal_entry",
+   "fieldtype": "Link",
+   "label": "Credit Account in Journal Entry",
+   "mandatory_depends_on": "eval: doc.effect_in_salary_in_journal_entry",
+   "options": "Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "submit_new_employee_shift_assignment",
+   "fieldtype": "Check",
+   "label": "Submit New Employee Shift Assignment"
+  },
+  {
+   "fieldname": "loan_tab",
+   "fieldtype": "Tab Break",
+   "label": "Loan"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_loan_request_in_portal",
+   "fieldtype": "Check",
+   "label": "Show Loan Request in Portal"
+  },
+  {
+   "fieldname": "employee_loan_account",
+   "fieldtype": "Link",
+   "label": "Employee Loan Account",
+   "options": "Account"
+  },
+  {
+   "default": "0",
+   "fieldname": "max_no_of_installments",
+   "fieldtype": "Int",
+   "label": "Max No. Of Installments",
+   "non_negative": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "max_noof_employee_loan",
+   "fieldtype": "Int",
+   "label": "Max no.of Employee Loan",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "salary_component_for_installment",
+   "fieldtype": "Link",
+   "label": "Salary Component for installment",
+   "options": "Salary Component"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-17 14:47:47.958657",
+ "modified_by": "Administrator",
+ "module": "hr-cust",
+ "name": "OurEdu HR Setting",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -2,11 +2,11 @@
  * Journal Entry – custom party fields + Excel import
  */
 
-frappe.provide("acc_cust.journal_entry");
+frappe.provide("acc_egypt_cust.journal_entry");
 
 const PARTY_ACCOUNT_TYPES = ["Receivable", "Payable"];
 
-acc_cust.journal_entry.load_employee_loan_accounts = function (frm) {
+acc_egypt_cust.journal_entry.load_employee_loan_accounts = function (frm) {
     frm._employee_loan_accounts = [];
 
     if (!frm.doc.company) {
@@ -21,7 +21,7 @@ acc_cust.journal_entry.load_employee_loan_accounts = function (frm) {
         });
 };
 
-acc_cust.journal_entry.sync_row_party_fields = function (row, loan_accounts = []) {
+acc_egypt_cust.journal_entry.sync_row_party_fields = function (row, loan_accounts = []) {
     if (!row.account) {
         row.party_type = "";
         row.party = "";
@@ -42,15 +42,15 @@ acc_cust.journal_entry.sync_row_party_fields = function (row, loan_accounts = []
     }
 };
 
-acc_cust.journal_entry.sync_all_party_fields = function (frm) {
+acc_egypt_cust.journal_entry.sync_all_party_fields = function (frm) {
     const loan_accounts = frm._employee_loan_accounts || [];
     (frm.doc.accounts || []).forEach((row) => {
-        acc_cust.journal_entry.sync_row_party_fields(row, loan_accounts);
+        acc_egypt_cust.journal_entry.sync_row_party_fields(row, loan_accounts);
     });
     frm.refresh_field("accounts");
 };
 
-acc_cust.journal_entry.backfill_custom_party_fields = function (frm) {
+acc_egypt_cust.journal_entry.backfill_custom_party_fields = function (frm) {
     (frm.doc.accounts || []).forEach((row) => {
         if (!row.custom_party_type && row.party_type) {
             row.custom_party_type = row.party_type;
@@ -69,9 +69,9 @@ frappe.ui.form.on("Journal Entry", {
             },
         }));
 
-        acc_cust.journal_entry.load_employee_loan_accounts(frm);
-        acc_cust.journal_entry.backfill_custom_party_fields(frm);
-        acc_cust.journal_entry.sync_all_party_fields(frm);
+        acc_egypt_cust.journal_entry.load_employee_loan_accounts(frm);
+        acc_egypt_cust.journal_entry.backfill_custom_party_fields(frm);
+        acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
 
         frm.fields_dict.accounts.grid.add_custom_button(__("Import from Excel"), () => {
             _show_import_dialog(frm);
@@ -79,12 +79,12 @@ frappe.ui.form.on("Journal Entry", {
     },
 
     company(frm) {
-        acc_cust.journal_entry.load_employee_loan_accounts(frm);
-        acc_cust.journal_entry.sync_all_party_fields(frm);
+        acc_egypt_cust.journal_entry.load_employee_loan_accounts(frm);
+        acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
     },
 
     before_save(frm) {
-        acc_cust.journal_entry.sync_all_party_fields(frm);
+        acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
     },
 });
 
@@ -93,13 +93,13 @@ frappe.ui.form.on("Journal Entry Account", {
         // Run after ERPNext sets account_type via get_account_details
         setTimeout(() => {
             const row = locals[cdt][cdn];
-            acc_cust.journal_entry.sync_row_party_fields(row, frm._employee_loan_accounts || []);
+            acc_egypt_cust.journal_entry.sync_row_party_fields(row, frm._employee_loan_accounts || []);
             frm.refresh_field("accounts");
         }, 400);
     },
 
     custom_party_type(frm, cdt, cdn) {
-        acc_cust.journal_entry.sync_row_party_fields(
+        acc_egypt_cust.journal_entry.sync_row_party_fields(
             locals[cdt][cdn],
             frm._employee_loan_accounts || []
         );
@@ -107,7 +107,7 @@ frappe.ui.form.on("Journal Entry Account", {
     },
 
     custom_party(frm, cdt, cdn) {
-        acc_cust.journal_entry.sync_row_party_fields(
+        acc_egypt_cust.journal_entry.sync_row_party_fields(
             locals[cdt][cdn],
             frm._employee_loan_accounts || []
         );
@@ -173,7 +173,7 @@ function _show_import_dialog(frm) {
 
 function _do_import(frm, file_url, import_mode) {
     frappe.call({
-        method: "acc_cust.overrides.journal_entry.parse_je_accounts_excel",
+        method: "acc_egypt_cust.overrides.journal_entry.parse_je_accounts_excel",
         args: { file_url: file_url },
         freeze: true,
         freeze_message: __("Importing…"),
@@ -197,7 +197,7 @@ function _do_import(frm, file_url, import_mode) {
                 Object.assign(new_row, row);
             });
 
-            acc_cust.journal_entry.sync_all_party_fields(frm);
+            acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
 
             frappe.show_alert({
                 message: __("{0} row(s) imported successfully.", [rows.length]),
@@ -209,7 +209,7 @@ function _do_import(frm, file_url, import_mode) {
 
 function _download_template() {
     window.open(
-        "/api/method/acc_cust.overrides.journal_entry.download_je_accounts_template",
+        "/api/method/acc_egypt_cust.overrides.journal_entry.download_je_accounts_template",
         "_blank"
     );
 }
