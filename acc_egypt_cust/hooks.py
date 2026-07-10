@@ -16,6 +16,30 @@ fixtures = [
             ]]
         ]
     },
+    {
+        "dt": "Workspace",
+        "filters": [
+            ["module", "in", [
+                "Acc Egypt Cust",
+            ]]
+        ]
+    },
+    {
+        "dt": "Workspace Sidebar",
+        "filters": [
+            ["module", "in", [
+                "Acc Egypt Cust",
+            ]]
+        ]
+    },
+    {
+        "dt": "Number Card",
+        "filters": [
+            ["Number Card", "is_standard", "=", 0],
+            ["Number Card", "document_type", "in", ["Journal Entry"]]
+        ]
+    }
+
 ]
 
 # Includes in <head>
