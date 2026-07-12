@@ -1,7 +1,7 @@
 {
  "app": "acc_egypt_cust",
  "charts": [],
- "content": "[{\"id\":\"jRKxiVdTSW\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a</span>\",\"col\":12}},{\"id\":\"NIFpSyKfBd\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Pending )\",\"col\":4}},{\"id\":\"fXf1WQoVuL\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Pending Audit )\",\"col\":4}},{\"id\":\"OWXMeC94e5\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Approved )\",\"col\":4}},{\"id\":\"cwNodEssXw\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xPWHP46_v5\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4}},{\"id\":\"tu572GO45z\",\"type\":\"card\",\"data\":{\"card_name\":\"Tax Master\",\"col\":4}},{\"id\":\"iuhXFJIsOF\",\"type\":\"card\",\"data\":{\"card_name\":\"Accounting Diminsions\",\"col\":4}},{\"id\":\"wz7WzLPzEI\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4}},{\"id\":\"e5wV_Pc0Jr\",\"type\":\"card\",\"data\":{\"card_name\":\"Qudrat Platform\",\"col\":4}},{\"id\":\"ejDvQVHsqp\",\"type\":\"card\",\"data\":{\"card_name\":\"Banking\",\"col\":4}},{\"id\":\"HMiK2c35ay\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>                                 Reports &amp; Financial Statements</b></span>\",\"col\":12}},{\"id\":\"DWRNs5FFNC\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"DywaI_yDHn\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Statements\",\"col\":4}}]",
+ "content": "[{\"id\":\"jRKxiVdTSW\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a</span>\",\"col\":12}},{\"id\":\"NIFpSyKfBd\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Pending )\",\"col\":4}},{\"id\":\"fXf1WQoVuL\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Pending Audit )\",\"col\":4}},{\"id\":\"OWXMeC94e5\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"Journal Entry ( Approved )\",\"col\":4}},{\"id\":\"cwNodEssXw\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xPWHP46_v5\",\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4}},{\"id\":\"tu572GO45z\",\"type\":\"card\",\"data\":{\"card_name\":\"Tax Master\",\"col\":4}},{\"id\":\"iuhXFJIsOF\",\"type\":\"card\",\"data\":{\"card_name\":\"Accounting Diminsions\",\"col\":4}},{\"id\":\"wz7WzLPzEI\",\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4}},{\"id\":\"dkKT5GuFCJ\",\"type\":\"card\",\"data\":{\"card_name\":\"Selling\",\"col\":4}},{\"id\":\"eA2vwDVXlM\",\"type\":\"card\",\"data\":{\"card_name\":\"Banking\",\"col\":4}},{\"id\":\"HMiK2c35ay\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>                                 Reports &amp; Financial Statements</b></span>\",\"col\":12}},{\"id\":\"DWRNs5FFNC\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"lTtqAN14in\",\"type\":\"card\",\"data\":{\"card_name\":\"Financial Statements\",\"col\":4}}]",
  "creation": "2026-07-10 19:22:30.848490",
  "custom_blocks": [],
  "docstatus": 0,
@@ -17,107 +17,55 @@
  "links": [
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Transactions",
-   "link_count": 4,
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Journal Entry",
+   "is_query_report": 1,
+   "label": "Trial Balance",
    "link_count": 0,
-   "link_to": "Journal Entry",
-   "link_type": "DocType",
+   "link_to": "Trial Balance",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Invoice",
+   "is_query_report": 1,
+   "label": "Custom Trial Balance",
    "link_count": 0,
-   "link_to": "Purchase Invoice",
-   "link_type": "DocType",
+   "link_to": "Custom Trial Balance",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Sales Invoice",
+   "is_query_report": 1,
+   "label": "Profit and Loss Statement",
    "link_count": 0,
-   "link_to": "Sales Invoice",
-   "link_type": "DocType",
+   "link_to": "Profit and Loss Statement",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Payment Entry",
+   "is_query_report": 1,
+   "label": "Cash Flow",
    "link_count": 0,
-   "link_to": "Payment Entry",
-   "link_type": "DocType",
+   "link_to": "Cash Flow",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
-   "label": "Tax Master",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Sales Taxes and Charges Template",
+   "is_query_report": 1,
+   "label": "Balance Sheet",
    "link_count": 0,
-   "link_to": "Sales Taxes and Charges Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Purchase Taxes and Charges Template",
-   "link_count": 0,
-   "link_to": "Purchase Taxes and Charges Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Accounting Diminsions",
-   "link_count": 1,
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Project",
-   "link_count": 0,
-   "link_to": "Project",
-   "link_type": "DocType",
+   "link_to": "Balance Sheet",
+   "link_type": "Report",
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
@@ -129,7 +77,6 @@
    "link_count": 7,
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Egypt",
    "type": "Card Break"
   },
   {
@@ -212,64 +159,10 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Qudrat Platform",
-   "link_count": 5,
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Banking",
-   "link_count": 3,
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bank Reconciliation Tool",
-   "link_count": 0,
-   "link_to": "Bank Reconciliation Tool",
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Bank Reconciliation Statement",
-   "link_count": 0,
-   "link_to": "Bank Reconciliation Statement",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Bank Clearance",
-   "link_count": 0,
-   "link_to": "Bank Clearance",
-   "link_type": "DocType",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
    "label": "Financial Statements",
-   "link_count": 5,
+   "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Egypt",
    "type": "Card Break"
   },
   {
@@ -277,54 +170,101 @@
    "is_query_report": 1,
    "label": "Trial Balance",
    "link_count": 0,
-   "link_to": "Trial Balance",
-   "link_type": "Report",
-   "onboard": 0,
-   "only_for": "Egypt",
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 1,
-   "label": "Custom Trial Balance",
-   "link_count": 0,
    "link_to": "Custom Trial Balance",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "Egypt",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 1,
+   "is_query_report": 0,
    "label": "Profit and Loss Statement",
    "link_count": 0,
    "link_to": "Profit and Loss Statement",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "Egypt",
+   "report_ref_doctype": "GL Entry",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 1,
+   "is_query_report": 0,
    "label": "Cash Flow",
    "link_count": 0,
    "link_to": "Cash Flow",
    "link_type": "Report",
    "onboard": 0,
-   "only_for": "Egypt",
+   "report_ref_doctype": "GL Entry",
    "type": "Link"
   },
   {
    "hidden": 0,
-   "is_query_report": 1,
+   "is_query_report": 0,
    "label": "Balance Sheet",
    "link_count": 0,
    "link_to": "Balance Sheet",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "GL Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Selling",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Order",
+   "link_count": 0,
+   "link_to": "Sales Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Request",
+   "link_count": 0,
+   "link_to": "Payment Request",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Accounting Diminsions",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Project",
+   "link_count": 0,
+   "link_to": "Project",
+   "link_type": "DocType",
+   "onboard": 0,
    "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cost Center",
+   "link_count": 0,
+   "link_to": "Cost Center",
+   "link_type": "DocType",
+   "onboard": 0,
    "type": "Link"
   },
   {
@@ -334,7 +274,6 @@
    "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
-   "only_for": "Egypt",
    "type": "Card Break"
   },
   {
@@ -380,9 +319,143 @@
    "onboard": 0,
    "only_for": "Egypt",
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Tax Master",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Sales Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Taxes and Charges Template",
+   "link_count": 0,
+   "link_to": "Purchase Taxes and Charges Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Transactions",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Journal Entry",
+   "link_count": 0,
+   "link_to": "Journal Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Purchase Invoice",
+   "link_count": 0,
+   "link_to": "Purchase Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Sales Invoice",
+   "link_count": 0,
+   "link_to": "Sales Invoice",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payment Entry",
+   "link_count": 0,
+   "link_to": "Payment Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "only_for": "Egypt",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Banking",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Reconciliation Tool",
+   "link_count": 0,
+   "link_to": "Bank Reconciliation Tool",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Reconciliation Statement",
+   "link_count": 0,
+   "link_to": "Bank Reconciliation Statement",
+   "link_type": "Report",
+   "onboard": 0,
+   "report_ref_doctype": "Journal Entry",
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Transaction",
+   "link_count": 0,
+   "link_to": "Bank Transaction",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bank Clearance",
+   "link_count": 0,
+   "link_to": "Bank Clearance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-07-10 19:22:30.848490",
+ "modified": "2026-07-11 08:06:10.042102",
  "modified_by": "Administrator",
  "module": "Acc Egypt Cust",
  "name": "\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a",
