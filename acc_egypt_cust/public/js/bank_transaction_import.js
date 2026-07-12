@@ -25,12 +25,12 @@ function _show_bt_import_dialog(frm) {
 				options: `
 					<div style="margin-bottom:10px; color:#555;">
 						Upload an <b>.xlsx</b> file with the following columns:<br>
-						<code>Date</code>, <code>Deposit</code>, <code>Withdraw</code>,
+						<code>Date</code>, <code>Deposit</code>, <code>Withdrawal</code>,
 						<code>Description</code>, <code>Reference Number</code>, <code>Bank Account</code>
 						<br><br>
 						<small>
 							• Column names are case-insensitive.<br>
-							• <b>Date</b> and at least one of <b>Deposit</b> / <b>Withdraw</b> are required per row.<br>
+							• <b>Date</b> and at least one of <b>Deposit</b> / <b>Withdrawal</b> are required per row.<br>
 							• <b>Bank Account</b> column is optional if a Bank Account is already selected in the form.
 						</small>
 					</div>
@@ -63,7 +63,7 @@ function _show_bt_import_dialog(frm) {
 
 	dialog.$wrapper.find("#btn-download-bt-template").on("click", () => {
 		window.open(
-			"/api/method/acc_cust.overrides.bank_reconciliation.download_bank_transaction_template",
+			"/api/method/acc_egypt_cust.overrides.bank_reconciliation.download_bank_transaction_template",
 			"_blank"
 		);
 	});
@@ -71,7 +71,7 @@ function _show_bt_import_dialog(frm) {
 
 function _do_import(frm, file_url) {
 	frappe.call({
-		method: "acc_cust.overrides.bank_reconciliation.upload_bank_transactions",
+		method: "acc_egypt_cust.overrides.bank_reconciliation.upload_bank_transactions",
 		args: {
 			file_url: file_url,
 			bank_account: frm.doc.bank_account || null,

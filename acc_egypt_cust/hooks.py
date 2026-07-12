@@ -52,6 +52,10 @@ app_include_js = [
     "/assets/acc_egypt_cust/js/gl_ledger_custom.js",
     "/assets/acc_egypt_cust/js/bank_reconciliation_report.js",
     "/assets/acc_egypt_cust/js/ledger_prompt.js",
+    # Prevents the sidebar from auto-switching when navigating to DocTypes
+    # that belong to other modules (e.g. Stock, Selling).
+    # See: acc_egypt_cust/public/js/workspace_sidebar_fix.js
+    "/assets/acc_egypt_cust/js/workspace_sidebar_fix.js",
 ]
 
 # include js in doctype views

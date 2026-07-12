@@ -19,7 +19,7 @@ frappe.listview_settings["Journal Entry"] = {
                     __("Reopen {0} Journal Entries?", [names.length]),
                     () => {
                         frappe.call({
-                            method: "acc_cust.tasks.reopen_cancelled_journal_entries",
+                            method: "acc_egypt_cust.tasks.reopen_cancelled_journal_entries",
                             args: {
                                 names: names
                             },
