@@ -17,6 +17,22 @@ fixtures = [
         ]
     },
     {
+        "dt": "Custom Field",
+        "filters": [
+            ["module", "in", [
+                "Acc Egypt Cust",
+            ]]
+        ]
+    },
+    {
+        "dt": "Property Setter",
+        "filters": [
+            ["module", "in", [
+                "Acc Egypt Cust",
+            ]]
+        ]
+    },
+    {
         "dt": "Workspace",
         "filters": [
             ["module", "in", [
@@ -39,6 +55,7 @@ fixtures = [
             ["Number Card", "document_type", "in", ["Journal Entry"]]
         ]
     }
+
 
 ]
 

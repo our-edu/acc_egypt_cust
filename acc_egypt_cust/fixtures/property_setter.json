@@ -1,1 +1,18 @@
-[]
+[
+ {
+  "default_value": null,
+  "doc_type": "Supplier",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "tax_id",
+  "is_system_generated": 0,
+  "modified": "2026-07-13 13:10:31.732161",
+  "module": "Acc Egypt Cust",
+  "name": "Supplier-tax_id-unique",
+  "property": "unique",
+  "property_type": "check",
+  "row_name": null,
+  "value": "0"
+ }
+]
