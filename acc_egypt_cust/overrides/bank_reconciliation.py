@@ -20,6 +20,13 @@ import json
 import frappe
 from frappe import _
 
+# ---------------------------------------------------------------------------
+# In-memory tracking of JE rows already allocated in this reconciliation
+# session.  Used during bulk auto-reconcile to avoid double-allocation before
+# DB commits propagate.  Keys: (je_name, jea_row_name, gl_account)
+# ---------------------------------------------------------------------------
+_session_allocated_je_rows: set = set()
+
 
 def _custom_get_journal_entries(filters):
     """
@@ -241,11 +248,20 @@ def get_je_row_matches(
         .where(filter_by_date)
         .orderby(je.cheque_date if cint(filter_by_reference_date) else je.posting_date)
     )
-    
-    # For auto-reconcile: require reference match
+
+    # For auto-reconcile: require reference match.
+    # When multiple JE rows share the same reference_no (e.g. payroll split
+    # lines), also filter by exact amount so each bank transaction only sees
+    # the one row whose amount equals its unallocated amount.
     if frappe.flags.auto_reconcile_vouchers is True:
         query = query.where(row_reference == transaction.reference_number)
-    
+        tx_amount = (
+            flt(transaction.withdrawal)
+            if transaction.withdrawal > 0.0
+            else flt(transaction.deposit)
+        )
+        query = query.where(getattr(jea, amount_field) == tx_amount)
+
     results = query.run(as_dict=True)
     
     # Calculate ranking for each result
@@ -350,9 +366,15 @@ def subtract_je_row_allocations(gl_account, vouchers):
         je_name = voucher.get("name")
         row_name = voucher.get("jea_row_name")
         paid_amount = flt(voucher.get("paid_amount"))
-        
-        # Check for row-level allocation first
+
         row_key = (je_name, row_name, gl_account)
+
+        # Skip rows already allocated in this auto-reconcile session
+        # (in-flight allocations not yet committed to DB).
+        if row_key in _session_allocated_je_rows:
+            continue
+
+        # Subtract persisted row-level allocation
         if row_key in row_allocations:
             paid_amount -= flt(row_allocations[row_key])
         
@@ -431,7 +453,20 @@ def custom_reconcile_vouchers(bank_transaction_name, vouchers):
     transaction.update_allocated_amount()
     transaction.set_status()
     transaction.save()
-    
+
+    # Update session tracking so subsequent auto-reconcile iterations in the
+    # same batch don't re-offer rows that were just allocated.
+    bank_account_data = frappe.db.get_values(
+        "Bank Account", transaction.bank_account, ["account"], as_dict=True
+    )
+    if bank_account_data:
+        _gl_account = bank_account_data[0].account
+        for entry in transaction.payment_entries:
+            if entry.payment_document == "Journal Entry" and entry.get("custom_je_row_name"):
+                _session_allocated_je_rows.add(
+                    (entry.payment_entry, entry.custom_je_row_name, _gl_account)
+                )
+
     return transaction
 
 
@@ -538,7 +573,11 @@ def custom_start_auto_reconcile(
     from erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool import (
         get_auto_reconcile_message,
     )
-    
+
+    # Reset session tracking at the start of each auto-reconcile run so that
+    # stale entries from a previous run do not bleed into this one.
+    _session_allocated_je_rows.clear()
+
     frappe.flags.auto_reconcile_vouchers = True
 
     reconciled, partially_reconciled = set(), set()
@@ -557,18 +596,35 @@ def custom_start_auto_reconcile(
         if not linked_payments:
             continue
 
+        # ---------------------------------------------------------------
+        # When multiple same-reference JE rows are present, pick only the
+        # single best-ranked candidate per transaction so we don't
+        # accidentally consume several rows into one bank transaction.
+        #
+        # Selection logic (applied in order):
+        #   1. Keep only entries with the highest rank score.
+        #   2. If still multiple, keep only entries whose paid_amount
+        #      equals the transaction's unallocated amount exactly.
+        #   3. If still multiple, take the first one (arbitrary tiebreak).
+        # ---------------------------------------------------------------
+        best_rank = max(p.get("rank", 0) for p in linked_payments)
+        top_matches = [p for p in linked_payments if p.get("rank", 0) == best_rank]
+        if len(top_matches) > 1:
+            tx_amount = flt(transaction.unallocated_amount)
+            exact = [p for p in top_matches if flt(p.get("paid_amount")) == tx_amount]
+            top_matches = exact if exact else top_matches[:1]
+        linked_payments = top_matches
+
         # Include jea_row_name for JE entries (this is the key difference!)
-        vouchers = list(
-            map(
-                lambda entry: {
-                    "payment_doctype": entry.get("doctype"),
-                    "payment_name": entry.get("name"),
-                    "amount": entry.get("paid_amount"),
-                    "jea_row_name": entry.get("jea_row_name"),  # Include row identifier
-                },
-                linked_payments,
-            )
-        )
+        vouchers = [
+            {
+                "payment_doctype": entry.get("doctype"),
+                "payment_name": entry.get("name"),
+                "amount": entry.get("paid_amount"),
+                "jea_row_name": entry.get("jea_row_name"),  # Include row identifier
+            }
+            for entry in linked_payments
+        ]
 
         # Use our custom reconcile function
         updated_transaction = custom_reconcile_vouchers(transaction.name, json.dumps(vouchers))
@@ -583,6 +639,7 @@ def custom_start_auto_reconcile(
     frappe.msgprint(title=_("Auto Reconciliation"), msg=alert_message, indicator=indicator)
 
     frappe.flags.auto_reconcile_vouchers = False
+    _session_allocated_je_rows.clear()  # Clean up after run
 
 
 @frappe.whitelist(allow_guest=False)

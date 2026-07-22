@@ -15,8 +15,8 @@ def add_general_ledger_total_row():
 
 
 def sync_custom_fields():
-    """Sync custom fields from JSON files in acc_cust/custom/ directory"""
-    custom_dir = os.path.join(os.path.dirname(__file__), "acc_cust", "custom")
+    """Sync custom fields from JSON files in acc_egypt_cust/custom/ directory"""
+    custom_dir = os.path.join(os.path.dirname(__file__), "acc_egypt_cust", "custom")
     
     if not os.path.exists(custom_dir):
         return

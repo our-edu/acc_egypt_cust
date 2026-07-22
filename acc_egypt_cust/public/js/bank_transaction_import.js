@@ -8,7 +8,7 @@
 
 frappe.ui.form.on("Bank Reconciliation Tool", {
 	refresh(frm) {
-		frappe.msgprint("tst")
+		// frappe.msgprint("tst")
 		frm.add_custom_button(__("Import Bank Transactions"), () => {
 			_show_bt_import_dialog(frm);
 		});

@@ -1,18 +1,18 @@
 [
  {
   "default_value": null,
-  "doc_type": "Supplier",
+  "doc_type": "Asset",
   "docstatus": 0,
   "doctype": "Property Setter",
   "doctype_or_field": "DocField",
-  "field_name": "tax_id",
+  "field_name": "calculate_depreciation",
   "is_system_generated": 0,
-  "modified": "2026-07-13 13:10:31.732161",
+  "modified": "2026-07-22 11:28:52.006485",
   "module": "Acc Egypt Cust",
-  "name": "Supplier-tax_id-unique",
-  "property": "unique",
-  "property_type": "check",
+  "name": "Asset-calculate_depreciation-default",
+  "property": "default",
+  "property_type": "Text",
   "row_name": null,
-  "value": "0"
+  "value": "1"
  }
 ]

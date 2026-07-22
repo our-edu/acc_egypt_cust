@@ -79,6 +79,7 @@ app_include_js = [
 doctype_js = {
     "Journal Entry": "public/js/journal_entry_upload.js",
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
+    "Asset": "public/js/asset.js",
 }
 doctype_list_js = {
     "Journal Entry": "public/js/journal_entry.js"
