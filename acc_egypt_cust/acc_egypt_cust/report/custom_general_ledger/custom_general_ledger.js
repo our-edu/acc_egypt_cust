@@ -156,6 +156,10 @@ frappe.query_reports["Custom General Ledger"] = {
 					value: "Categorize by Voucher",
 				},
 				{
+					label: __("Categorize by Voucher (No Totals)"),
+					value: "Categorize by Voucher (No Totals)",
+				},
+				{
 					label: __("Categorize by Voucher (Consolidated)"),
 					value: "Categorize by Voucher (Consolidated)",
 				},
@@ -168,7 +172,8 @@ frappe.query_reports["Custom General Ledger"] = {
 					value: "Categorize by Party",
 				},
 			],
-			default: "Categorize by Voucher (Consolidated)",
+			default: "Categorize by Voucher (No Totals)",
+
 		},
 		{
 			fieldname: "tax_id",

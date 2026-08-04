@@ -174,7 +174,7 @@ def get_gl_entries(filters, accounting_dimensions):
 	if filters.get("include_dimensions"):
 		order_by_statement = "order by gle.posting_date, gle.creation"
 
-	if filters.get("categorize_by") == "Categorize by Voucher":
+	if filters.get("categorize_by") in ["Categorize by Voucher", "Categorize by Voucher (No Totals)"]:
 		order_by_statement = "order by gle.posting_date, gle.voucher_type, gle.voucher_no"
 	if filters.get("categorize_by") == "Categorize by Account":
 		order_by_statement = "order by gle.account, gle.posting_date, gle.creation"
@@ -435,6 +435,8 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 
 	totals, entries = get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map)
 
+	no_totals = filters.get("categorize_by") == "Categorize by Voucher (No Totals)"
+
 	# Opening for filtered account
 	add_total_to_data(totals, "opening")
 
@@ -443,6 +445,14 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 		for acc_dict in gle_map.values():
 			all_entries.extend(acc_dict.entries)
 		data += all_entries
+
+	elif filters.get("categorize_by") == "Categorize by Voucher (No Totals)":
+		# Same grouping/ordering as "Categorize by Voucher" but emit only the
+		# raw GL detail rows — no opening / total / closing summary rows.
+		for acc_dict in gle_map.values():
+			if not acc_dict.entries:
+				continue
+			data += acc_dict.entries
 
 	elif filters.get("categorize_by") != "Categorize by Voucher (Consolidated)":
 		set_opening_closing = (not filters.get("categorize_by") and not filters.get("voucher_no")) or (
@@ -496,6 +506,7 @@ def get_group_by_field(group_by):
 	elif group_by in ["Categorize by Voucher (Consolidated)", "Categorize by Account"]:
 		return "account"
 	else:
+		# "Categorize by Voucher", "Categorize by Voucher (No Totals)", and default
 		return "voucher_no"
 
 
