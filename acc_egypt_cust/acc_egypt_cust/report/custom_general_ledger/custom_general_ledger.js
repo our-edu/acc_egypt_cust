@@ -256,6 +256,7 @@ frappe.query_reports["Custom General Ledger"] = {
 			fieldname: "show_remarks",
 			label: __("Show Remarks"),
 			fieldtype: "Check",
+			default: 1,
 		},
 		{
 			fieldname: "ignore_err",

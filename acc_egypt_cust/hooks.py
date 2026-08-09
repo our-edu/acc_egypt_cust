@@ -81,6 +81,11 @@ doctype_js = {
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
 }
+doctype_tree_js = {
+    # Overrides the "View Ledger" toolbar button in Chart of Accounts
+    # so it opens Custom General Ledger instead of General Ledger.
+    "Account": "public/js/account_tree.js",
+}
 doctype_list_js = {
     "Journal Entry": "public/js/journal_entry.js"
 }
