@@ -80,6 +80,7 @@ doctype_js = {
     "Journal Entry": "public/js/journal_entry_upload.js",
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
+    "Asset Movement": "public/js/asset_movement.js",
 }
 doctype_tree_js = {
     # Overrides the "View Ledger" toolbar button in Chart of Accounts
@@ -182,6 +183,7 @@ doctype_list_js = {
 
 override_doctype_class = {
     "Journal Entry": "acc_egypt_cust.overrides.journal_entry_class.CustomJournalEntry",
+    "Asset Movement": "acc_egypt_cust.overrides.asset_movement_class.CustomAssetMovement",
 }
 
 # Document Events
