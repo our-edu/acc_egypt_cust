@@ -199,7 +199,10 @@ doc_events = {
     "Journal Entry": {
         "before_validate": "acc_egypt_cust.overrides.journal_entry.sync_custom_party_to_party",
         "after_insert": "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
-        "on_update": "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
+        "on_update": [
+            "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
+            "acc_egypt_cust.overrides.journal_entry.auto_submit_depreciation_entry",
+        ],
     }
 }
 
