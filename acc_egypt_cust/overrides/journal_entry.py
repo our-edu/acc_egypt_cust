@@ -34,6 +34,15 @@ def set_title_to_name(doc, method=None):
     doc.db_set("title", doc.name)
 
 
+def auto_submit_depreciation_entry(doc, method=None):
+    """Force-submit Asset Depreciation Journal Entries even if a Journal Entry
+    workflow would otherwise leave them as drafts (erpnext skips its own
+    auto-submit for these once a workflow is configured on Journal Entry)."""
+    if doc.voucher_type == "Depreciation Entry" and doc.docstatus == 0 and doc.meta.get_workflow():
+        doc.flags.ignore_permissions = True
+        doc.submit()
+
+
 def sync_custom_party_to_party(doc, method=None):
     """Copy custom_party fields to party_type/party for AR/AP, loan, and Employee party rows."""
     loan_accounts = _get_employee_loan_accounts(doc.company)
