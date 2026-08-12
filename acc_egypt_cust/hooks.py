@@ -205,7 +205,11 @@ doc_events = {
             "acc_egypt_cust.overrides.journal_entry.set_title_to_name",
             "acc_egypt_cust.overrides.journal_entry.auto_submit_depreciation_entry",
         ],
-    }
+    },
+    "Asset": {
+        "validate": "acc_egypt_cust.overrides.asset.set_salvage_value",
+        "before_submit": "acc_egypt_cust.overrides.asset.set_composite_asset_salvage_value_on_submit",
+    },
 }
 
 # Scheduled Tasks
