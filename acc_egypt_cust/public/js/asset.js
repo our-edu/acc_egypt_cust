@@ -8,13 +8,27 @@ frappe.ui.form.on("Asset", {
 		frm.set_value("sub_category", "");
 		set_sub_category_query(frm);
 	},
+	// erpnext's own asset_type handler never re-runs toggle_reference_doc, so
+	// purchase_receipt/purchase_invoice can be left stuck reqd=1 (set before a
+	// type was picked) even after switching to Existing Asset/Composite Asset,
+	// where those fields are hidden via depends_on but still checked as mandatory.
+	asset_type: function (frm) {
+		frm.trigger("toggle_reference_doc");
+		// Mirror overrides/asset.py: Calculate Depreciation defaults on for every
+		// type except Composite Asset, which stays off until it's capitalized.
+		if (frm.doc.docstatus === 0 && frm.doc.asset_type !== "Composite Asset") {
+			frm.set_value("calculate_depreciation", 1);
+		}
+		if (frm.doc.docstatus === 0 && frm.doc.asset_type == "Composite Asset") {
+			frm.set_value("calculate_depreciation", 0);
+		}
+	},
 	available_for_use_date: function (frm) {
 		set_default_depreciation_posting_date(frm);
 	},
 	finance_books_add: function (frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
 		set_default_depreciation_posting_date_for_row(frm, row);
-		set_default_salvage_value_for_row(row);
 	}
 });
 
@@ -26,12 +40,6 @@ function disable_salvage_value_recalculation() {
 	frappe.ui.form.off("Asset Finance Book", "expected_value_after_useful_life");
 	frappe.ui.form.off("Asset Finance Book", "salvage_value_percentage");
 	frappe.ui.form.off("Asset Finance Book", "rate_of_depreciation");
-}
-
-function set_default_salvage_value_for_row(row) {
-	if (!row.expected_value_after_useful_life) {
-		frappe.model.set_value(row.doctype, row.name, "expected_value_after_useful_life", 1);
-	}
 }
 
 // erpnext auto-populates Finance Books from the Asset Category by replacing
@@ -55,7 +63,6 @@ function override_set_finance_book() {
 					frm.set_value("finance_books", r.message);
 					(frm.doc.finance_books || []).forEach(function (row) {
 						set_default_depreciation_posting_date_for_row(frm, row);
-						set_default_salvage_value_for_row(row);
 					});
 					frm.refresh_field("finance_books");
 				}
