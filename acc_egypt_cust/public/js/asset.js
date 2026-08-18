@@ -1,12 +1,37 @@
 frappe.ui.form.on("Asset", {
+	// A brand-new Asset can arrive with Calculate Depreciation already set to 1
+	// before any of our other handlers run - e.g. "+ New" from an Asset list
+	// with a "Calculate Depreciation = Yes" filter applied copies that filter
+	// onto the new doc via route_options, and Duplicate carries over the source
+	// doc's value. asset_type/asset_category only react to a *change*, so they
+	// never get a chance to correct a value that was pre-filled like that.
+	// onload runs once, right after such prefills land on frm.doc but before
+	// the user can interact, so it's the right place to re-derive the value.
+	onload: function (frm) {
+		if (!frm.is_new()) {
+			return;
+		}
+		if (frm.doc.asset_type) {
+			frm.trigger("asset_type");
+		} else {
+			frm.set_value("calculate_depreciation", 0);
+		}
+	},
 	refresh: function (frm) {
 		set_sub_category_query(frm);
 		disable_salvage_value_recalculation();
 		override_set_finance_book();
+		set_non_depreciable_category_flag(frm);
 	},
 	asset_category: function (frm) {
 		frm.set_value("sub_category", "");
 		set_sub_category_query(frm);
+	},
+	// Non-depreciable is a property of the Item's own Asset Category
+	// (Item.asset_category), not the Asset's asset_category field - see
+	// set_non_depreciable_category_flag.
+	item_code: function (frm) {
+		set_non_depreciable_category_flag(frm);
 	},
 	// erpnext's own asset_type handler never re-runs toggle_reference_doc, so
 	// purchase_receipt/purchase_invoice can be left stuck reqd=1 (set before a
@@ -16,10 +41,27 @@ frappe.ui.form.on("Asset", {
 		frm.trigger("toggle_reference_doc");
 		// Mirror overrides/asset.py: Calculate Depreciation defaults on for every
 		// type except Composite Asset, which stays off until it's capitalized.
-		if (frm.doc.docstatus === 0 && frm.doc.asset_type !== "Composite Asset") {
-			frm.set_value("calculate_depreciation", 1);
+		// Skip entirely when custom_stop_auto_calculate_depreciation is checked or
+		// the asset category is non-depreciable (see set_non_depreciable_category_flag).
+		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
+			frm.set_value("calculate_depreciation", frm.doc.asset_type === "Composite Asset" ? 0 : 1);
+		} else {
+			frm.set_value("calculate_depreciation", 0);
 		}
-		if (frm.doc.docstatus === 0 && frm.doc.asset_type == "Composite Asset") {
+	},
+	custom_stop_auto_calculate_depreciation: function (frm) {
+		frm.set_value("calculate_depreciation", 0);
+		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
+			frm.trigger("asset_type");
+		}
+	},
+	// Safety net: reacts to the field's own change event, so it catches
+	// calculate_depreciation being turned on by ANY code path - ours, erpnext
+	// core's, another app's, or something async that runs after onload/refresh
+	// - as long as it happened without asset_type being chosen yet, which is
+	// the one case that should never legitimately mark it on a new Asset.
+	calculate_depreciation: function (frm) {
+		if (frm.is_new() && !frm.doc.asset_type && frm.doc.calculate_depreciation) {
 			frm.set_value("calculate_depreciation", 0);
 		}
 	},
@@ -67,6 +109,35 @@ function override_set_finance_book() {
 					frm.refresh_field("finance_books");
 				}
 			},
+		});
+	});
+}
+
+// Whether the auto-mark-Calculate-Depreciation code (asset_type handler) should
+// run at all: stopped when the user has manually checked
+// custom_stop_auto_calculate_depreciation, or when the chosen Item's Asset
+// Category is flagged non-depreciable (mirrors overrides/asset.py: _is_non_depreciable_category).
+function is_auto_calculate_depreciation_stopped(frm) {
+	return !!frm.doc.custom_stop_auto_calculate_depreciation || !!frm.doc.__non_depreciable_category;
+}
+
+// "Non-depreciable" is read off the Item's own Asset Category (Item.asset_category),
+// not the Asset's asset_category field, which can be blank or diverge from the item.
+function set_non_depreciable_category_flag(frm) {
+	frm.doc.__non_depreciable_category = 0;
+	if (!frm.doc.item_code) {
+		return;
+	}
+	frappe.db.get_value("Item", frm.doc.item_code, "asset_category").then((r) => {
+		var item_asset_category = r.message && r.message.asset_category;
+		if (!item_asset_category) {
+			return;
+		}
+		frappe.db.get_value("Asset Category", item_asset_category, "non_depreciable_category").then((r2) => {
+			frm.doc.__non_depreciable_category = r2.message && r2.message.non_depreciable_category;
+			if (frm.doc.__non_depreciable_category && frm.doc.calculate_depreciation) {
+				frm.set_value("calculate_depreciation", 0);
+			}
 		});
 	});
 }
