@@ -11,7 +11,14 @@ def _is_capitalized(doc):
 
 
 def _is_non_depreciable_category(doc):
-    return bool(frappe.db.get_value("Asset Category", doc.asset_category, "non_depreciable_category"))
+    # "Non-depreciable" is read off the Item's own Asset Category (Item.asset_category),
+    # not the Asset's asset_category field, which can be blank or diverge from the item.
+    if not doc.item_code:
+        return False
+    item_asset_category = frappe.db.get_value("Item", doc.item_code, "asset_category")
+    if not item_asset_category:
+        return False
+    return bool(frappe.db.get_value("Asset Category", item_asset_category, "non_depreciable_category"))
 
 
 def _should_calculate_depreciation(doc):
@@ -34,7 +41,15 @@ def set_salvage_value(doc, method=None):
     Books from the Asset Category defaults (like the "Set Finance Book" button) when
     missing, and Salvage Value defaults to 1 (0 for a Composite Asset until it's
     submitted - see set_composite_asset_salvage_value_on_submit).
+
+    custom_stop_auto_calculate_depreciation lets a user with permlevel 1 access opt
+    an asset out of this auto-marking entirely, leaving Calculate Depreciation and
+    Finance Books exactly as manually set - except a non-depreciable category still
+    forces Calculate Depreciation off, since erpnext rejects that combination outright.
     """
+    if doc.get("custom_stop_auto_calculate_depreciation") and not _is_non_depreciable_category(doc):
+        return
+
     if not _should_calculate_depreciation(doc):
         doc.calculate_depreciation = 0
         doc.finance_books = []
