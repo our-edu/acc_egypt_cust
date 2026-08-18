@@ -16,10 +16,35 @@ frappe.ui.form.on("Asset", {
 		frm.trigger("toggle_reference_doc");
 		// Mirror overrides/asset.py: Calculate Depreciation defaults on for every
 		// type except Composite Asset, which stays off until it's capitalized.
+<<<<<<< Updated upstream
 		if (frm.doc.docstatus === 0 && frm.doc.asset_type !== "Composite Asset") {
 			frm.set_value("calculate_depreciation", 1);
 		}
 		if (frm.doc.docstatus === 0 && frm.doc.asset_type == "Composite Asset") {
+=======
+		// Skip entirely when custom_stop_auto_calculate_depreciation is checked or
+		// the asset category is non-depreciable (see set_non_depreciable_category_flag).
+		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
+			frm.set_value("calculate_depreciation", frm.doc.asset_type === "Composite Asset" ? 0 : 1);
+		}
+		// else{
+		// 	frm.set_value("calculate_depreciation", 0);
+		// }
+	},
+	custom_stop_auto_calculate_depreciation: function (frm) {
+		frm.set_value("calculate_depreciation", 0);
+		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
+			frm.trigger("asset_type");
+		}
+	},
+	// Safety net: reacts to the field's own change event, so it catches
+	// calculate_depreciation being turned on by ANY code path - ours, erpnext
+	// core's, another app's, or something async that runs after onload/refresh
+	// - as long as it happened without asset_type being chosen yet, which is
+	// the one case that should never legitimately mark it on a new Asset.
+	calculate_depreciation: function (frm) {
+		if (frm.is_new() && !frm.doc.asset_type && frm.doc.calculate_depreciation) {
+>>>>>>> Stashed changes
 			frm.set_value("calculate_depreciation", 0);
 		}
 	},
