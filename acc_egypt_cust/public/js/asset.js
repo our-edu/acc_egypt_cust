@@ -45,9 +45,10 @@ frappe.ui.form.on("Asset", {
 		// the asset category is non-depreciable (see set_non_depreciable_category_flag).
 		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
 			frm.set_value("calculate_depreciation", frm.doc.asset_type === "Composite Asset" ? 0 : 1);
-		} else {
-			frm.set_value("calculate_depreciation", 0);
 		}
+		// else{
+		// 	frm.set_value("calculate_depreciation", 0);
+		// }
 	},
 	custom_stop_auto_calculate_depreciation: function (frm) {
 		frm.set_value("calculate_depreciation", 0);
