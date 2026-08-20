@@ -81,6 +81,7 @@ doctype_js = {
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
     "Asset Movement": "public/js/asset_movement.js",
+    "Auto Repeat": "public/js/auto_repeat.js",
 }
 doctype_tree_js = {
     # Overrides the "View Ledger" toolbar button in Chart of Accounts
