@@ -61,6 +61,25 @@ acc_egypt_cust.journal_entry.backfill_custom_party_fields = function (frm) {
     });
 };
 
+acc_egypt_cust.journal_entry.fetch_party_name = function (frm, cdt, cdn) {
+    const row = locals[cdt][cdn];
+    const party_type = row.custom_party_type || row.party_type;
+    const party = row.custom_party || row.party;
+
+    if (!party_type || !party) {
+        frappe.model.set_value(cdt, cdn, "custom_party_name", "");
+        return;
+    }
+
+    frappe.call({
+        method: "acc_egypt_cust.overrides.journal_entry.get_party_name",
+        args: { party_type: party_type, party: party },
+        callback: function (r) {
+            frappe.model.set_value(cdt, cdn, "custom_party_name", r.message || "");
+        },
+    });
+};
+
 frappe.ui.form.on("Journal Entry", {
     refresh(frm) {
         frm.set_query("custom_party_type", "accounts", () => ({
@@ -72,6 +91,12 @@ frappe.ui.form.on("Journal Entry", {
         acc_egypt_cust.journal_entry.load_employee_loan_accounts(frm);
         acc_egypt_cust.journal_entry.backfill_custom_party_fields(frm);
         acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
+
+        (frm.doc.accounts || []).forEach((row) => {
+            if ((row.custom_party || row.party) && !row.custom_party_name) {
+                acc_egypt_cust.journal_entry.fetch_party_name(frm, row.doctype, row.name);
+            }
+        });
 
         frm.fields_dict.accounts.grid.add_custom_button(__("Import from Excel"), () => {
             _show_import_dialog(frm);
@@ -94,6 +119,7 @@ frappe.ui.form.on("Journal Entry Account", {
         setTimeout(() => {
             const row = locals[cdt][cdn];
             acc_egypt_cust.journal_entry.sync_row_party_fields(row, frm._employee_loan_accounts || []);
+            acc_egypt_cust.journal_entry.fetch_party_name(frm, cdt, cdn);
             frm.refresh_field("accounts");
         }, 400);
     },
@@ -103,6 +129,7 @@ frappe.ui.form.on("Journal Entry Account", {
             locals[cdt][cdn],
             frm._employee_loan_accounts || []
         );
+        acc_egypt_cust.journal_entry.fetch_party_name(frm, cdt, cdn);
         frm.refresh_field("accounts");
     },
 
@@ -111,6 +138,7 @@ frappe.ui.form.on("Journal Entry Account", {
             locals[cdt][cdn],
             frm._employee_loan_accounts || []
         );
+        acc_egypt_cust.journal_entry.fetch_party_name(frm, cdt, cdn);
         frm.refresh_field("accounts");
     },
 });
@@ -195,6 +223,7 @@ function _do_import(frm, file_url, import_mode) {
             rows.forEach((row) => {
                 const new_row = frm.add_child("accounts");
                 Object.assign(new_row, row);
+                acc_egypt_cust.journal_entry.fetch_party_name(frm, new_row.doctype, new_row.name);
             });
 
             acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
