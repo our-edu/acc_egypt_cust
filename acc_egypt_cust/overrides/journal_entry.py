@@ -43,6 +43,22 @@ def auto_submit_depreciation_entry(doc, method=None):
         doc.submit()
 
 
+def _resolve_party_name(party_type, party):
+    """Fetch the display name for a party, mirroring erpnext's Payment Entry convention."""
+    if not party_type or not party:
+        return None
+
+    fieldname = "title" if party_type == "Shareholder" else party_type.lower() + "_name"
+    if frappe.db.has_column(party_type, fieldname):
+        return frappe.db.get_value(party_type, party, fieldname)
+    return frappe.db.get_value(party_type, party, "name")
+
+
+@frappe.whitelist()
+def get_party_name(party_type, party):
+    return _resolve_party_name(party_type, party)
+
+
 def sync_custom_party_to_party(doc, method=None):
     """Copy custom_party fields to party_type/party for AR/AP, loan, and Employee party rows."""
     loan_accounts = _get_employee_loan_accounts(doc.company)
@@ -51,6 +67,7 @@ def sync_custom_party_to_party(doc, method=None):
         if not row.account:
             row.party_type = None
             row.party = None
+            row.custom_party_name = None
             continue
 
         account_type = frappe.get_cached_value("Account", row.account, "account_type")
@@ -61,6 +78,8 @@ def sync_custom_party_to_party(doc, method=None):
         else:
             row.party_type = None
             row.party = None
+
+        row.custom_party_name = _resolve_party_name(row.party_type, row.party)
 
 
 @frappe.whitelist()
