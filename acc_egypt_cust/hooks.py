@@ -77,11 +77,23 @@ app_include_js = [
 
 # include js in doctype views
 doctype_js = {
-    "Journal Entry": "public/js/journal_entry_upload.js",
+    "Journal Entry": [
+        "public/js/journal_entry_upload.js",
+        # Redirects the "Ledger" button to Custom General Ledger
+        "public/js/journal_entry_ledger.js",
+    ],
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
     "Asset Movement": "public/js/asset_movement.js",
     "Auto Repeat": "public/js/auto_repeat.js",
+    # Redirect "View Ledger" / "Accounting Ledger" / "Ledger" / "General Ledger"
+    # buttons to Custom General Ledger instead of the standard General Ledger.
+    "Account": "public/js/account.js",
+    "Customer": "public/js/customer.js",
+    "Supplier": "public/js/supplier.js",
+    "Payment Entry": "public/js/payment_entry.js",
+    "Sales Invoice": "public/js/sales_invoice.js",
+    "Purchase Invoice": "public/js/purchase_invoice.js",
 }
 doctype_tree_js = {
     # Overrides the "View Ledger" toolbar button in Chart of Accounts
