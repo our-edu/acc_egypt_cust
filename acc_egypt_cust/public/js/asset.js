@@ -39,16 +39,23 @@ frappe.ui.form.on("Asset", {
 	// where those fields are hidden via depends_on but still checked as mandatory.
 	asset_type: function (frm) {
 		frm.trigger("toggle_reference_doc");
+<<<<<<< Updated upstream
 		// Mirror overrides/asset.py: Calculate Depreciation defaults on for every
 		// type except Composite Asset, which stays off until it's capitalized.
+=======
+		// Mirror overrides/asset.py: Calculate Depreciation defaults on for every type except Composite Asset, which stays off until it's capitalized.
+>>>>>>> Stashed changes
 		// Skip entirely when custom_stop_auto_calculate_depreciation is checked or
 		// the asset category is non-depreciable (see set_non_depreciable_category_flag).
 		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
 			frm.set_value("calculate_depreciation", frm.doc.asset_type === "Composite Asset" ? 0 : 1);
 		}
+<<<<<<< Updated upstream
 		// else{
 		// 	frm.set_value("calculate_depreciation", 0);
 		// }
+=======
+>>>>>>> Stashed changes
 	},
 	custom_stop_auto_calculate_depreciation: function (frm) {
 		frm.set_value("calculate_depreciation", 0);
