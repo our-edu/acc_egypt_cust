@@ -105,8 +105,11 @@ def validate_party(filters):
 
 
 def set_account_currency(filters):
+	# Always resolve company currency: the other-currency columns bind %(company_currency)s
+	# in get_gl_entries regardless of whether an account/party filter narrowed the report.
+	filters["company_currency"] = frappe.get_cached_value("Company", filters.company, "default_currency")
+
 	if filters.get("account") or (filters.get("party") and len(filters.party) == 1):
-		filters["company_currency"] = frappe.get_cached_value("Company", filters.company, "default_currency")
 		account_currency = None
 
 		if filters.get("account"):
@@ -196,21 +199,25 @@ def get_gl_entries(filters, accounting_dimensions):
 			"gle.debit_in_transaction_currency, gle.credit_in_transaction_currency, gle.transaction_currency,"
 		)
 
-	# Other currency (debit/credit/rate) is sourced from the Journal Entry Account row itself,
-	# not GL Entry, since exchange_rate only lives on the JE Account child table. Only populated
-	# when the parent Journal Entry has Multi Currency enabled; otherwise these stay NULL.
+	# Local-currency columns: for Journal Entry lines booked against a FOREIGN-currency
+	# account, show the company-currency (local) value of that line plus the rate used.
+	#
+	# Values come from the Journal Entry Account row rather than GL Entry because
+	# exchange_rate only lives on the JE Account child table, and jea.debit / jea.credit
+	# are already the company-currency amounts, so no multiplication (and no rounding
+	# drift) is needed.
+	#
+	# Gated on the ROW's own account currency, not on the parent JE's multi_currency flag:
+	# a multi-currency JE also contains local-currency lines, and those add nothing here --
+	# their debit/credit columns already carry the same figure. They stay NULL.
 	other_currency_fields = ""
-	other_currency_join = ""
 	if filters.get("add_values_in_other_currency"):
+		is_foreign = "jea.account_currency <> %(company_currency)s"
 		other_currency_fields = (
-			", CASE WHEN je.multi_currency = 1 THEN jea.debit_in_account_currency ELSE NULL END as other_currency_debit"
-			", CASE WHEN je.multi_currency = 1 THEN jea.credit_in_account_currency ELSE NULL END as other_currency_credit"
-			", CASE WHEN je.multi_currency = 1 THEN jea.exchange_rate ELSE NULL END as other_currency_rate"
-			", CASE WHEN je.multi_currency = 1 THEN jea.account_currency ELSE NULL END as other_currency"
-		)
-		other_currency_join = (
-			"LEFT JOIN `tabJournal Entry` je"
-			" ON je.name = gle.voucher_no AND gle.voucher_type = 'Journal Entry'"
+			f", CASE WHEN {is_foreign} THEN jea.debit END as other_currency_debit"
+			f", CASE WHEN {is_foreign} THEN jea.credit END as other_currency_credit"
+			f", CASE WHEN {is_foreign} THEN jea.exchange_rate END as other_currency_rate"
+			f", CASE WHEN {is_foreign} THEN %(company_currency)s END as other_currency"
 		)
 
 	# party and party_type: prefer custom_party/custom_party_type from JE accounts (for new docs),
@@ -249,13 +256,13 @@ def get_gl_entries(filters, accounting_dimensions):
 		LEFT JOIN (
 			select a.parent, a.account, a.custom_party, a.custom_party_type,
 				a.debit_in_account_currency, a.credit_in_account_currency,
+				a.debit, a.credit,
 				a.exchange_rate, a.account_currency,
 				row_number() over (partition by a.parent order by a.idx) as rn
 			from `tabJournal Entry Account` a
 		) jea ON jea.parent = gle.voucher_no
 			AND jea.rn = glpos.rn
 			AND jea.account = gle.account
-		{other_currency_join}
 		where gle.company=%(company)s {get_conditions(filters)}
 		{order_by_statement}
 	""",
@@ -592,6 +599,17 @@ def get_accountwise_gle(filters, accounting_dimensions, gl_entries, gle_map):
 			data[key].debit_in_transaction_currency += gle.debit_in_transaction_currency
 			data[key].credit_in_transaction_currency += gle.credit_in_transaction_currency
 
+		if filters.get("add_values_in_other_currency"):
+			# Unlike the transaction-currency pair these DO accumulate into the
+			# opening/total/closing rows, so Balance (Local Currency) can start from
+			# the opening figure. None is preserved when neither side has a value, so
+			# rows and totals with no foreign-account lines stay blank rather than 0.00.
+			for fieldname in ("other_currency_debit", "other_currency_credit"):
+				existing, incoming = data[key].get(fieldname), gle.get(fieldname)
+				if existing is None and incoming is None:
+					continue
+				data[key][fieldname] = (existing or 0) + (incoming or 0)
+
 		if (
 			filters.get("show_net_values_in_party_account")
 			and account_type_map.get(data[key].account)
@@ -703,6 +721,7 @@ def get_account_type_map(company):
 def get_result_as_list(data, filters):
 	balance = 0
 	other_currency_balance = 0
+	show_other_currency_balance = filters.get("add_values_in_other_currency")
 
 	for d in data:
 		if not d.get("posting_date"):
@@ -713,9 +732,7 @@ def get_result_as_list(data, filters):
 
 		d["balance"] = balance
 
-		# Balance in the other currency only makes sense for actual GL rows (it can mix
-		# currencies across rows otherwise), so opening/total/closing rows are left blank.
-		if filters.get("add_values_in_other_currency") and d.get("posting_date"):
+		if show_other_currency_balance:
 			other_currency_balance = get_balance(
 				d, other_currency_balance, "other_currency_debit", "other_currency_credit"
 			)
@@ -848,30 +865,32 @@ def get_columns(filters):
 	]
 
 	if filters.get("add_values_in_other_currency"):
+		# Populated only for Journal Entry lines on a foreign-currency account: the
+		# company-currency value of that line, plus the rate it was booked at.
 		columns += [
 			{
-				"label": _("Other Currency"),
+				"label": _("Local Currency"),
 				"fieldname": "other_currency",
 				"fieldtype": "Link",
 				"options": "Currency",
 				"width": 90,
 			},
 			{
-				"label": _("Debit (Other Currency)"),
+				"label": _("Debit (Local Currency)"),
 				"fieldname": "other_currency_debit",
 				"fieldtype": "Currency",
 				"options": "other_currency",
 				"width": 130,
 			},
 			{
-				"label": _("Credit (Other Currency)"),
+				"label": _("Credit (Local Currency)"),
 				"fieldname": "other_currency_credit",
 				"fieldtype": "Currency",
 				"options": "other_currency",
 				"width": 130,
 			},
 			{
-				"label": _("Balance (Other Currency)"),
+				"label": _("Balance (Local Currency)"),
 				"fieldname": "other_currency_balance",
 				"fieldtype": "Currency",
 				"options": "other_currency",

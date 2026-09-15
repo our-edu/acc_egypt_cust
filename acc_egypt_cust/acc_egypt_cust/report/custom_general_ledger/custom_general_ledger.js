@@ -254,7 +254,7 @@ frappe.query_reports["Custom General Ledger"] = {
 		},
 		{
 			fieldname: "add_values_in_other_currency",
-			label: __("Add Columns in Other Currency (Journal Entry)"),
+			label: __("Add Columns in Local Currency (Journal Entry)"),
 			fieldtype: "Check",
 			default: 1,
 		},
