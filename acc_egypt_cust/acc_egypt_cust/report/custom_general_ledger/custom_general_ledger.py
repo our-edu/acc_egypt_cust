@@ -215,6 +215,19 @@ def get_gl_entries(filters, accounting_dimensions):
 
 	# party and party_type: prefer custom_party/custom_party_type from JE accounts (for new docs),
 	# fall back to GL Entry party/party_type for old documents or non-JE vouchers.
+	#
+	# The JE account row cannot be reached through gle.voucher_detail_no: for Journal
+	# Entries erpnext stores `reference_detail_no` there (an advance/payment reference),
+	# which is empty on ordinary JE lines (voucher_detail_no is NULL on every JE GL Entry
+	# row in this database — verified: 0 of the JE GL entries here have it set). A JE does
+	# emit its GL entries 1:1 in the accounts table's idx order, so the Nth GL entry of a
+	# voucher is the Nth accounts row and they are paired on that ordinal. Matching
+	# gle.account as well keeps the join fail-safe: if the ordering assumption is ever
+	# broken the join yields NULL and the COALESCE falls back to gle.party, rather than
+	# showing someone else's party.
+	# Note this relies on Accounts Settings.merge_similar_account_heads being off; with
+	# merging on, several accounts rows collapse into one GL entry and no single party
+	# is correct for it anyway (the account/count guards then degrade to a blank party).
 	gl_entries = frappe.db.sql(
 		f"""
 		select
@@ -226,9 +239,22 @@ def get_gl_entries(filters, accounting_dimensions):
 			gle.against_voucher_type, gle.against_voucher, gle.account_currency,
 			gle.against, gle.is_opening, gle.creation{other_currency_fields} {select_fields}
 		from `tabGL Entry` gle
-		LEFT JOIN `tabJournal Entry Account` jea
-			ON gle.voucher_type = 'Journal Entry'
-			AND gle.voucher_detail_no = jea.name
+		LEFT JOIN (
+			select gl.name as gl_name,
+				row_number() over (partition by gl.voucher_no order by gl.creation, gl.name) as rn
+			from `tabGL Entry` gl
+			where gl.voucher_type = 'Journal Entry' and gl.is_cancelled = 0
+				and gl.company = %(company)s
+		) glpos ON glpos.gl_name = gle.name
+		LEFT JOIN (
+			select a.parent, a.account, a.custom_party, a.custom_party_type,
+				a.debit_in_account_currency, a.credit_in_account_currency,
+				a.exchange_rate, a.account_currency,
+				row_number() over (partition by a.parent order by a.idx) as rn
+			from `tabJournal Entry Account` a
+		) jea ON jea.parent = gle.voucher_no
+			AND jea.rn = glpos.rn
+			AND jea.account = gle.account
 		{other_currency_join}
 		where gle.company=%(company)s {get_conditions(filters)}
 		{order_by_statement}
