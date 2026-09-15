@@ -25,6 +25,8 @@ DEBIT_CREDIT_DICT = {
 	"credit_in_account_currency": 0.0,
 	"debit_in_transaction_currency": None,
 	"credit_in_transaction_currency": None,
+	"other_currency_debit": None,
+	"other_currency_credit": None,
 }
 
 
@@ -194,6 +196,23 @@ def get_gl_entries(filters, accounting_dimensions):
 			"gle.debit_in_transaction_currency, gle.credit_in_transaction_currency, gle.transaction_currency,"
 		)
 
+	# Other currency (debit/credit/rate) is sourced from the Journal Entry Account row itself,
+	# not GL Entry, since exchange_rate only lives on the JE Account child table. Only populated
+	# when the parent Journal Entry has Multi Currency enabled; otherwise these stay NULL.
+	other_currency_fields = ""
+	other_currency_join = ""
+	if filters.get("add_values_in_other_currency"):
+		other_currency_fields = (
+			", CASE WHEN je.multi_currency = 1 THEN jea.debit_in_account_currency ELSE NULL END as other_currency_debit"
+			", CASE WHEN je.multi_currency = 1 THEN jea.credit_in_account_currency ELSE NULL END as other_currency_credit"
+			", CASE WHEN je.multi_currency = 1 THEN jea.exchange_rate ELSE NULL END as other_currency_rate"
+			", CASE WHEN je.multi_currency = 1 THEN jea.account_currency ELSE NULL END as other_currency"
+		)
+		other_currency_join = (
+			"LEFT JOIN `tabJournal Entry` je"
+			" ON je.name = gle.voucher_no AND gle.voucher_type = 'Journal Entry'"
+		)
+
 	# party and party_type: prefer custom_party/custom_party_type from JE accounts (for new docs),
 	# fall back to GL Entry party/party_type for old documents or non-JE vouchers.
 	gl_entries = frappe.db.sql(
@@ -205,11 +224,12 @@ def get_gl_entries(filters, accounting_dimensions):
 			gle.voucher_type, gle.voucher_subtype, gle.voucher_no, {dimension_fields}
 			gle.cost_center, gle.project, {transaction_currency_fields}
 			gle.against_voucher_type, gle.against_voucher, gle.account_currency,
-			gle.against, gle.is_opening, gle.creation {select_fields}
+			gle.against, gle.is_opening, gle.creation{other_currency_fields} {select_fields}
 		from `tabGL Entry` gle
 		LEFT JOIN `tabJournal Entry Account` jea
 			ON gle.voucher_type = 'Journal Entry'
 			AND gle.voucher_detail_no = jea.name
+		{other_currency_join}
 		where gle.company=%(company)s {get_conditions(filters)}
 		{order_by_statement}
 	""",
@@ -656,14 +676,24 @@ def get_account_type_map(company):
 
 def get_result_as_list(data, filters):
 	balance = 0
+	other_currency_balance = 0
 
 	for d in data:
 		if not d.get("posting_date"):
 			balance = 0
+			other_currency_balance = 0
 
 		balance = get_balance(d, balance, "debit", "credit")
 
 		d["balance"] = balance
+
+		# Balance in the other currency only makes sense for actual GL rows (it can mix
+		# currencies across rows otherwise), so opening/total/closing rows are left blank.
+		if filters.get("add_values_in_other_currency") and d.get("posting_date"):
+			other_currency_balance = get_balance(
+				d, other_currency_balance, "other_currency_debit", "other_currency_credit"
+			)
+			d["other_currency_balance"] = other_currency_balance
 
 		d["account_currency"] = filters.account_currency
 
@@ -685,7 +715,7 @@ def get_supplier_invoice_details():
 
 
 def get_balance(row, balance, debit_field, credit_field):
-	balance += row.get(debit_field, 0) - row.get(credit_field, 0)
+	balance += (row.get(debit_field) or 0) - (row.get(credit_field) or 0)
 
 	return balance
 
@@ -789,6 +819,47 @@ def get_columns(filters):
 			"width": 180,
 		},
 		{"label": _("Against Account"), "fieldname": "against", "width": 120},
+	]
+
+	if filters.get("add_values_in_other_currency"):
+		columns += [
+			{
+				"label": _("Other Currency"),
+				"fieldname": "other_currency",
+				"fieldtype": "Link",
+				"options": "Currency",
+				"width": 90,
+			},
+			{
+				"label": _("Debit (Other Currency)"),
+				"fieldname": "other_currency_debit",
+				"fieldtype": "Currency",
+				"options": "other_currency",
+				"width": 130,
+			},
+			{
+				"label": _("Credit (Other Currency)"),
+				"fieldname": "other_currency_credit",
+				"fieldtype": "Currency",
+				"options": "other_currency",
+				"width": 130,
+			},
+			{
+				"label": _("Balance (Other Currency)"),
+				"fieldname": "other_currency_balance",
+				"fieldtype": "Currency",
+				"options": "other_currency",
+				"width": 130,
+			},
+			{
+				"label": _("Exchange Rate"),
+				"fieldname": "other_currency_rate",
+				"fieldtype": "Float",
+				"width": 100,
+			},
+		]
+
+	columns += [
 		{"label": _("Party Type"), "fieldname": "party_type", "width": 100},
 		{"label": _("Party"), "fieldname": "party", "width": 100},
 	]
