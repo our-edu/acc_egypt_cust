@@ -169,10 +169,27 @@ def get_gl_entries(filters, accounting_dimensions):
 		gle.credit_in_account_currency """
 
 	if filters.get("show_remarks"):
+		# Remarks: for Journal Entry lines prefer the ROW's own remark (jea.user_remark)
+		# over GL Entry.remarks.
+		#
+		# GL Entry.remarks is written by the GL Entry validate hook
+		# (acc_cust/acc_egypt_cust overrides/gl_entry.py), which locates the accounts row
+		# by matching account + debit/credit AMOUNT and takes the first hit. When a JE
+		# repeats the same account with the same amount on several rows -- routine for
+		# expense/WIP splits paid out of one petty-cash or bank line -- every one of those
+		# GL entries is stamped with the FIRST matching row's remark, so distinct row
+		# remarks collapse into one.
+		#
+		# The jea join below pairs the Nth GL entry of a voucher with the Nth accounts row
+		# (same ordinal pairing already used for party above), so each line gets its own
+		# remark. Reading it here also repairs already-posted vouchers, which a fix to the
+		# write-side hook alone would not. Non-JE vouchers and JE rows with a blank
+		# user_remark fall back to gle.remarks unchanged.
+		remarks_field = "COALESCE(NULLIF(jea.user_remark, ''), gle.remarks)"
 		if remarks_length := frappe.get_single_value("Accounts Settings", "general_ledger_remarks_length"):
-			select_fields += f",substr(gle.remarks, 1, {remarks_length}) as 'remarks'"
+			select_fields += f",substr({remarks_field}, 1, {remarks_length}) as 'remarks'"
 		else:
-			select_fields += """,gle.remarks"""
+			select_fields += f",{remarks_field} as 'remarks'"
 
 	order_by_statement = "order by gle.posting_date, gle.account, gle.creation"
 
@@ -255,6 +272,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		) glpos ON glpos.gl_name = gle.name
 		LEFT JOIN (
 			select a.parent, a.account, a.custom_party, a.custom_party_type,
+				a.user_remark,
 				a.debit_in_account_currency, a.credit_in_account_currency,
 				a.debit, a.credit,
 				a.exchange_rate, a.account_currency,
