@@ -86,9 +86,9 @@ def sync_custom_party_to_party(doc, method=None):
 def parse_je_accounts_excel(file_url, company=None):
     """
     Parse an uploaded Excel file and return rows for Journal Entry accounts table.
-    Expected columns (case-insensitive): account, debit_in_account_currency,
-    credit_in_account_currency, exchange_rate, multi_currency, party_type, party,
-    cost_center, project, user_remark.
+    Expected columns (case-insensitive): account, debit, credit, party_type, party,
+    cost_center, project, user_remark, reference_no, reference_date, multi_currency,
+    currency, exchange_rate, debit_in_account_currency, credit_in_account_currency.
 
     Returns {"rows": [...], "multi_currency": bool}.
 
@@ -131,6 +131,8 @@ def parse_je_accounts_excel(file_url, company=None):
         "credit": "credit_in_account_currency",
         "credit_in_account_currency": "credit_in_account_currency",
         "exchange_rate": "exchange_rate",
+        "currency": "account_currency",
+        "account_currency": "account_currency",
         "party_type": "custom_party_type",
         "party": "custom_party",
         "custom_party_type": "custom_party_type",
@@ -236,10 +238,8 @@ def download_je_accounts_template():
 
     columns = [
         "account",
-        "debit_in_account_currency",
-        "credit_in_account_currency",
-        "exchange_rate",
-        "multi_currency",
+        "debit",
+        "credit",
         "party_type",
         "party",
         "cost_center",
@@ -247,6 +247,11 @@ def download_je_accounts_template():
         "user_remark",
         "reference_no",
         "reference_date",
+        "multi_currency",
+        "currency",
+        "exchange_rate",
+        "debit_in_account_currency",
+        "credit_in_account_currency",
     ]
 
     wb = openpyxl.Workbook()
