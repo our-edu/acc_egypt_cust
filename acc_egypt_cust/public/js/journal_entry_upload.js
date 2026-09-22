@@ -153,11 +153,16 @@ function _show_import_dialog(frm) {
                 options: `
                     <div style="margin-bottom: 10px; color: #555;">
                         Upload an <b>.xlsx</b> file with the following columns:<br>
-                        <code>account</code>, <code>debit</code>, <code>credit</code>,
+                        <code>account</code>, <code>debit_in_account_currency</code>,
+                        <code>credit_in_account_currency</code>, <code>exchange_rate</code>,
+                        <code>multi_currency</code>,
                         <code>custom_party_type</code>, <code>custom_party</code>, <code>cost_center</code>,
                         <code>project</code>, <code>user_remark</code>,
                         <code>reference_no</code>, <code>reference_date</code>
-                        <br><small>Only <b>account</b> is required. Column names are case-insensitive.</small>
+                        <br><small>Only <b>account</b> is required. Column names are case-insensitive.<br>
+                        <code>exchange_rate</code> is optional -- leave blank to auto-fetch on save.
+                        <code>multi_currency</code> (TRUE/FALSE) ticks the JE's Multi Currency option;
+                        it's also detected automatically from the account's currency.</small>
                     </div>
                     <button class="btn btn-xs btn-default" id="btn-download-template"
                         style="margin-bottom:12px;">
@@ -202,14 +207,14 @@ function _show_import_dialog(frm) {
 function _do_import(frm, file_url, import_mode) {
     frappe.call({
         method: "acc_egypt_cust.overrides.journal_entry.parse_je_accounts_excel",
-        args: { file_url: file_url },
+        args: { file_url: file_url, company: frm.doc.company },
         freeze: true,
         freeze_message: __("Importing…"),
         callback(r) {
             if (r.exc || !r.message) return;
 
-            const rows = r.message;
-            if (!rows.length) {
+            const { rows, multi_currency } = r.message;
+            if (!rows || !rows.length) {
                 frappe.msgprint(__("No rows were found in the file."));
                 return;
             }
@@ -227,6 +232,14 @@ function _do_import(frm, file_url, import_mode) {
             });
 
             acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
+
+            // The sheet may not flag every foreign-currency row explicitly (or at
+            // all) -- the backend already OR's that in, so just apply it here.
+            if (multi_currency && !frm.doc.multi_currency) {
+                frm.set_value("multi_currency", 1);
+            }
+
+            frm.refresh_field("accounts");
 
             frappe.show_alert({
                 message: __("{0} row(s) imported successfully.", [rows.length]),

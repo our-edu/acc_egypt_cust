@@ -83,12 +83,23 @@ def sync_custom_party_to_party(doc, method=None):
 
 
 @frappe.whitelist()
-def parse_je_accounts_excel(file_url):
+def parse_je_accounts_excel(file_url, company=None):
     """
     Parse an uploaded Excel file and return rows for Journal Entry accounts table.
-    Expected columns (case-insensitive): account, debit, credit, party_type, party,
+    Expected columns (case-insensitive): account, debit_in_account_currency,
+    credit_in_account_currency, exchange_rate, multi_currency, party_type, party,
     cost_center, project, user_remark.
-    Returns a list of dicts ready to insert into the accounts child table.
+
+    Returns {"rows": [...], "multi_currency": bool}.
+
+    "multi_currency" is a Journal Entry (parent) checkbox, not a Journal Entry
+    Account (child) field, so it can't be assigned into a row dict like the rest of
+    FIELD_MAP. It's read per row here and folded into a single overall flag: true if
+    any row's cell is truthy, OR if any row's account is booked in a currency other
+    than the company's (via `company`, passed in from frm.doc.company) -- this way an
+    imported foreign-currency line doesn't need the sheet author to remember to tick
+    the column, and doesn't hit erpnext's "Please check Multi Currency option to
+    allow accounts with other currency" throw on save.
     """
     try:
         import openpyxl
@@ -111,13 +122,15 @@ def parse_je_accounts_excel(file_url):
         val = cell.value
         headers.append(str(val).strip().lower() if val is not None else "")
 
-    # Mapping from Excel header -> JE Account field
+    # Mapping from Excel header -> JE Account field. "multi_currency" is handled
+    # separately below since it lives on the parent Journal Entry, not this child row.
     FIELD_MAP = {
         "account": "account",
         "debit": "debit_in_account_currency",
         "debit_in_account_currency": "debit_in_account_currency",
         "credit": "credit_in_account_currency",
         "credit_in_account_currency": "credit_in_account_currency",
+        "exchange_rate": "exchange_rate",
         "party_type": "custom_party_type",
         "party": "custom_party",
         "custom_party_type": "custom_party_type",
@@ -133,22 +146,40 @@ def parse_je_accounts_excel(file_url):
         "reference_date": "custom_reference_date",
         "custom_reference_date": "custom_reference_date",
     }
+    MULTI_CURRENCY_HEADER = "multi_currency"
+
+    company_currency = (
+        frappe.get_cached_value("Company", company, "default_currency") if company else None
+    )
+
+    def _is_truthy_cell(val):
+        if isinstance(val, bool):
+            return val
+        if val is None:
+            return False
+        return str(val).strip().lower() in ("1", "true", "yes", "y", "x")
 
     rows = []
+    multi_currency = False
     for row in ws.iter_rows(min_row=2, values_only=True):
         # Skip entirely blank rows
         if all(v is None or str(v).strip() == "" for v in row):
             continue
 
         entry = {}
+        row_multi_currency = False
         for idx, header in enumerate(headers):
             if idx >= len(row):
                 break
-            field = FIELD_MAP.get(header)
-            if not field:
-                continue
             val = row[idx]
-            if val is None:
+
+            if header == MULTI_CURRENCY_HEADER:
+                if _is_truthy_cell(val):
+                    row_multi_currency = True
+                continue
+
+            field = FIELD_MAP.get(header)
+            if not field or val is None:
                 continue
             # Numeric fields: coerce to float
             if field in ("debit_in_account_currency", "credit_in_account_currency"):
@@ -156,6 +187,13 @@ def parse_je_accounts_excel(file_url):
                     val = float(val)
                 except (ValueError, TypeError):
                     val = 0.0
+            elif field == "exchange_rate":
+                # Leave unset on a bad/blank cell so erpnext auto-fetches it on save
+                # (Journal Entry.set_exchange_rate) instead of forcing a wrong rate.
+                try:
+                    val = float(val)
+                except (ValueError, TypeError):
+                    continue
             # Date fields: openpyxl returns datetime objects for date cells
             elif field == "custom_reference_date":
                 import datetime
@@ -167,13 +205,25 @@ def parse_je_accounts_excel(file_url):
                 val = str(val).strip()
             entry[field] = val
 
-        if entry.get("account"):
-            rows.append(entry)
+        if not entry.get("account"):
+            continue
+
+        # Auto-detect a foreign-currency account regardless of the sheet's own
+        # multi_currency column (see docstring above).
+        if company_currency:
+            account_currency = frappe.get_cached_value("Account", entry["account"], "account_currency")
+            if account_currency and account_currency != company_currency:
+                row_multi_currency = True
+
+        if row_multi_currency:
+            multi_currency = True
+
+        rows.append(entry)
 
     if not rows:
         frappe.throw(_("No valid rows found. Make sure the file has an 'account' column with data."))
 
-    return rows
+    return {"rows": rows, "multi_currency": multi_currency}
 
 
 @frappe.whitelist(allow_guest=False)
@@ -186,8 +236,10 @@ def download_je_accounts_template():
 
     columns = [
         "account",
-        "debit",
-        "credit",
+        "debit_in_account_currency",
+        "credit_in_account_currency",
+        "exchange_rate",
+        "multi_currency",
         "party_type",
         "party",
         "cost_center",
