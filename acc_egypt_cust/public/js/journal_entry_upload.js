@@ -153,13 +153,17 @@ function _show_import_dialog(frm) {
                 options: `
                     <div style="margin-bottom: 10px; color: #555;">
                         Upload an <b>.xlsx</b> file with the following columns:<br>
-                        <code>account</code>, <code>debit_in_account_currency</code>,
-                        <code>credit_in_account_currency</code>, <code>exchange_rate</code>,
-                        <code>multi_currency</code>,
+                        <code>account</code>, <code>debit</code>, <code>credit</code>,
                         <code>custom_party_type</code>, <code>custom_party</code>, <code>cost_center</code>,
                         <code>project</code>, <code>user_remark</code>,
-                        <code>reference_no</code>, <code>reference_date</code>
+                        <code>reference_no</code>, <code>reference_date</code>,
+                        <code>multi_currency</code>, <code>currency</code>, <code>exchange_rate</code>,
+                        <code>debit_in_account_currency</code>, <code>credit_in_account_currency</code>
                         <br><small>Only <b>account</b> is required. Column names are case-insensitive.<br>
+                        Use <b>debit</b>/<b>credit</b> for a normal, single-currency line.<br>
+                        For a foreign-currency line, fill <b>debit_in_account_currency</b>/
+                        <b>credit_in_account_currency</b> instead (they take priority over
+                        <b>debit</b>/<b>credit</b> when both are given).<br>
                         <code>exchange_rate</code> is optional -- leave blank to auto-fetch on save.
                         <code>multi_currency</code> (TRUE/FALSE) ticks the JE's Multi Currency option;
                         it's also detected automatically from the account's currency.</small>
