@@ -1,5 +1,67 @@
 [
  {
+  "app": null,
+  "docstatus": 0,
+  "doctype": "Workspace Sidebar",
+  "for_user": null,
+  "header_icon": "",
+  "items": [
+   {
+    "child": 0,
+    "collapsible": 1,
+    "filters": null,
+    "icon": null,
+    "indent": 0,
+    "keep_closed": 0,
+    "label": "Home",
+    "link_to": "الحسابات",
+    "link_type": "Workspace",
+    "navigate_to_tab": null,
+    "route_options": null,
+    "show_arrow": 0,
+    "type": "Link",
+    "url": null
+   }
+  ],
+  "modified": "2026-07-12 12:38:10.106039",
+  "module": "Acc Egypt Cust",
+  "module_onboarding": null,
+  "name": "الحسابات",
+  "standard": 0,
+  "title": "الحسابات"
+ },
+ {
+  "app": null,
+  "docstatus": 0,
+  "doctype": "Workspace Sidebar",
+  "for_user": null,
+  "header_icon": "",
+  "items": [
+   {
+    "child": 0,
+    "collapsible": 1,
+    "filters": null,
+    "icon": null,
+    "indent": 0,
+    "keep_closed": 0,
+    "label": "Home",
+    "link_to": "الحسابات",
+    "link_type": "Workspace",
+    "navigate_to_tab": null,
+    "route_options": null,
+    "show_arrow": 0,
+    "type": "Link",
+    "url": null
+   }
+  ],
+  "modified": "2026-07-22 16:47:10.639985",
+  "module": "Acc Egypt Cust",
+  "module_onboarding": null,
+  "name": "Finance",
+  "standard": 0,
+  "title": "Finance"
+ },
+ {
   "app": "acc_egypt_cust",
   "docstatus": 0,
   "doctype": "Workspace Sidebar",
