@@ -1,6 +1,8 @@
 frappe.listview_settings["Journal Entry"] = {
     refresh(listview) {
 
+        if (!frappe.user.has_role("System Manager")) return;
+
         // Add button in top toolbar
         listview.page.add_button(
             __("Reopen Cancelled"),
