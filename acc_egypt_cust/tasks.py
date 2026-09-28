@@ -152,6 +152,7 @@ def _send_notification(doc_name, subject, message, recipients):
 
 @frappe.whitelist()
 def reopen_cancelled_journal_entries(names):
+    frappe.only_for("System Manager")
 
     if isinstance(names, str):
         import json
