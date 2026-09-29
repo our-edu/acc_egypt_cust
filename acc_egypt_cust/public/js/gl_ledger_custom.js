@@ -517,10 +517,12 @@ function generate_standard_print(selected_columns) {
                 font-family: Arial, sans-serif;
             }
             
-            /* Page break styling */
-            .page-break {
+            /* Page break styling (own class: Frappe's print_css gives .page-break
+               page-break-after: always, which together with page-break-before
+               produced an empty page between every page) */
+            .gl-page-break {
                 page-break-before: always;
-                margin-top: 20px;
+                page-break-after: auto;
             }
             
             /* Ensure header stays on first page only */
@@ -552,9 +554,6 @@ function generate_standard_print(selected_columns) {
                     margin: 1.5cm;
                 }
                 
-                .page-break {
-                    page-break-before: always;
-                }
                 
                 /* Ensure header only on first page */
                 .report-header {
@@ -585,9 +584,14 @@ function generate_standard_print(selected_columns) {
             }
             
             .print-format {
-                padding: 0.5in;
-                min-height: 10in;
                 position: relative;
+            }
+
+            @media screen {
+                .print-format {
+                    padding: 0.5in;
+                    min-height: 10in;
+                }
             }
         </style>
     </head>
@@ -658,7 +662,7 @@ function build_report_content_with_page_breaks(data, filters, selected_columns, 
     for (let page = 0; page < total_pages; page++) {
         // Add page break before each page except the first
         if (page > 0) {
-            content += '<div class="page-break"></div>';
+            content += '<div class="gl-page-break"></div>';
         }
         
         // Get data for current page
@@ -741,9 +745,6 @@ function build_page_content(page_data, filters, selected_columns, page_number, t
                         </div>`
                     }
                 </div>
-            </div>` : (filters.party && filters.party.length > 0) ? `
-            
-                
             </div>` : ''}
 
             <!-- ================= DATE + COMPANY + PERIOD ================= -->
