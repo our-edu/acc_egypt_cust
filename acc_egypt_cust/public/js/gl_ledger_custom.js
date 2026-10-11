@@ -552,6 +552,26 @@ function generate_standard_print(selected_columns) {
                 @page {
                     size: A4;
                     margin: 1.5cm;
+
+                    @top-center {
+                        content: "${__("STATEMENT OF ACCOUNTS")} - ${__("Page")} " counter(page) " ${__("of")} " counter(pages);
+                        font-size: 12px;
+                        color: #666;
+                    }
+
+                    @bottom-right {
+                        content: counter(page);
+                        font-size: 8px;
+                        color: #999;
+                        font-family: Arial, sans-serif;
+                    }
+                }
+
+                /* First page already has the full report header */
+                @page :first {
+                    @top-center {
+                        content: none;
+                    }
                 }
                 
                 
@@ -653,28 +673,12 @@ function generate_standard_print(selected_columns) {
     }
 }
 
-// Function to build report content with proper page breaks after table
+// Function to build report content as one continuous table. The browser breaks
+// pages only when a page is full; thead repeats on every page and page numbers
+// come from the @page margin boxes (fixed row chunks left half-empty pages
+// whenever a chunk overflowed one page).
 function build_report_content_with_page_breaks(data, filters, selected_columns, total_row, closing_row) {
-    let content = '';
-    let items_per_page = 25; // Number of rows per page
-    let total_pages = Math.ceil(data.length / items_per_page);
-    
-    for (let page = 0; page < total_pages; page++) {
-        // Add page break before each page except the first
-        if (page > 0) {
-            content += '<div class="gl-page-break"></div>';
-        }
-        
-        // Get data for current page
-        let start = page * items_per_page;
-        let end = Math.min(start + items_per_page, data.length);
-        let page_data = data.slice(start, end);
-        
-        // Build page content
-        content += build_page_content(page_data, filters, selected_columns, page + 1, total_pages, total_row, closing_row);
-    }
-    
-    return content;
+    return build_page_content(data, filters, selected_columns, 1, 1, total_row, closing_row);
 }
 
 // Function to build content for a single page
@@ -866,9 +870,6 @@ filtered_page_data.forEach((row) => {
     content += `   </tbody>
             </table>
 
-            <!-- ================= PAGE NUMBER ================= -->
-            <div class="page-number-small">${page_number}</div>
-            
             <!-- ================= CLOSING BALANCE (only on last page) ================= -->
             ${page_number === total_pages && closing_row ? `
             <div class="summary-box">
