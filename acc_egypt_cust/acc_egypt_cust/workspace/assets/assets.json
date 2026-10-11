@@ -7,7 +7,7 @@
   }
  ],
  "content": "[{\"id\":\"Q-Cl7bMXDm\",\"type\":\"chart\",\"data\":{\"chart_name\":\"Asset Value Analytics\",\"col\":12}},{\"id\":\"gsSQjvl0Tx\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"xRYRq1sW1O\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"Kx2j5N9BKZ\",\"type\":\"card\",\"data\":{\"card_name\":\"Assets\",\"col\":4}},{\"id\":\"jeNsxtLaH3\",\"type\":\"card\",\"data\":{\"card_name\":\"Maintenance\",\"col\":4}},{\"id\":\"EX5e3NvL51\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
- "creation": "2026-09-07 17:11:13.651908",
+ "creation": "2026-09-20 12:27:51.637180",
  "custom_blocks": [],
  "docstatus": 0,
  "doctype": "Workspace",
@@ -202,16 +202,17 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 1,
+   "is_query_report": 0,
    "label": "Fixed Asset Register",
    "link_count": 0,
    "link_to": "Fixed Asset Register",
    "link_type": "Report",
    "onboard": 0,
+   "report_ref_doctype": "Asset",
    "type": "Link"
   }
  ],
- "modified": "2026-09-13 15:29:37.026597",
+ "modified": "2026-10-11 14:00:31.739391",
  "modified_by": "Administrator",
  "module": "Acc Egypt Cust",
  "name": "Assets",
