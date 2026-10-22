@@ -261,7 +261,8 @@ def get_gl_entries(filters, accounting_dimensions):
 			gle.voucher_type, gle.voucher_subtype, gle.voucher_no, {dimension_fields}
 			gle.cost_center, gle.project, {transaction_currency_fields}
 			gle.against_voucher_type, gle.against_voucher, gle.account_currency,
-			gle.against, gle.is_opening, gle.creation{other_currency_fields} {select_fields}
+			gle.against, gle.is_opening, gle.creation,
+			jea.custom_reference_no as row_reference_no{other_currency_fields} {select_fields}
 		from `tabGL Entry` gle
 		LEFT JOIN (
 			select gl.name as gl_name,
@@ -272,7 +273,7 @@ def get_gl_entries(filters, accounting_dimensions):
 		) glpos ON glpos.gl_name = gle.name
 		LEFT JOIN (
 			select a.parent, a.account, a.custom_party, a.custom_party_type,
-				a.user_remark,
+				a.user_remark, a.custom_reference_no,
 				a.debit_in_account_currency, a.credit_in_account_currency,
 				a.debit, a.credit,
 				a.exchange_rate, a.account_currency,
@@ -958,6 +959,13 @@ def get_columns(filters):
 				"width": 100,
 			},
 			{"label": _("Supplier Invoice No"), "fieldname": "bill_no", "fieldtype": "Data", "width": 100},
+			# Journal Entry Account.custom_reference_no, via the jea join in get_gl_entries
+			{
+				"label": _("Row Reference Number"),
+				"fieldname": "row_reference_no",
+				"fieldtype": "Data",
+				"width": 120,
+			},
 		]
 	)
 
