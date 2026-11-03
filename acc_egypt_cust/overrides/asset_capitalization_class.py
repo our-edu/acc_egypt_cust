@@ -21,7 +21,8 @@ from erpnext.stock.get_item_details import ItemDetailsCtx
 # erpnext depreciates a consumed asset up to and including the capitalization's
 # posting date (from 1-1 to a capitalization on 25-1 = 25 days). Here the posting
 # date itself is excluded: depreciation runs up to the day before (24 days), and an
-# asset available for use on the posting date itself gets no depreciation at all.
+# asset available for use on the posting date itself gets no depreciation at all
+# (an empty depreciation schedule).
 
 
 def _depreciation_end_date(posting_date):
@@ -80,7 +81,9 @@ class CustomAssetCapitalization(AssetCapitalization):
 			asset = frappe.get_doc("Asset", item.asset)
 
 			if asset.asset_type != "Composite Component":
-				if _is_depreciated_on_capitalization(asset.name, self.posting_date):
+				if asset.calculate_depreciation:
+					# An asset available for use on the posting date itself gets 0 days
+					# here, so it ends with an empty schedule and no depreciation entry.
 					notes = _(
 						"This schedule was created when Asset {0} was consumed through Asset Capitalization {1}."
 					).format(
