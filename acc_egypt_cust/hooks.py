@@ -85,7 +85,6 @@ doctype_js = {
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
     "Asset Movement": "public/js/asset_movement.js",
-    "Asset Capitalization": "public/js/asset_capitalization.js",
     "Auto Repeat": "public/js/auto_repeat.js",
     # Redirect "View Ledger" / "Accounting Ledger" / "Ledger" / "General Ledger"
     # buttons to Custom General Ledger instead of the standard General Ledger.
@@ -266,6 +265,9 @@ doc_events = {
 
 # Bank Reconciliation Row-Level Matching Overrides
 override_whitelisted_methods = {
+    # Consumed asset value on Asset Capitalization excludes the posting date
+    "erpnext.assets.doctype.asset_capitalization.asset_capitalization.get_consumed_asset_details":
+        "acc_egypt_cust.overrides.asset_capitalization_class.get_consumed_asset_details",
     # Replace get_linked_payments to handle JE rows separately
     "erpnext.accounts.doctype.bank_reconciliation_tool.bank_reconciliation_tool.get_linked_payments":
         "acc_egypt_cust.overrides.bank_reconciliation.custom_get_linked_payments",
