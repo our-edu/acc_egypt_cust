@@ -85,6 +85,7 @@ doctype_js = {
     "Bank Reconciliation Tool": "public/js/bank_transaction_import.js",
     "Asset": "public/js/asset.js",
     "Asset Movement": "public/js/asset_movement.js",
+    "Asset Capitalization": "public/js/asset_capitalization.js",
     "Auto Repeat": "public/js/auto_repeat.js",
     # Redirect "View Ledger" / "Accounting Ledger" / "Ledger" / "General Ledger"
     # buttons to Custom General Ledger instead of the standard General Ledger.
@@ -197,6 +198,7 @@ doctype_list_js = {
 override_doctype_class = {
     "Journal Entry": "acc_egypt_cust.overrides.journal_entry_class.CustomJournalEntry",
     "Asset Movement": "acc_egypt_cust.overrides.asset_movement_class.CustomAssetMovement",
+    "Asset Capitalization": "acc_egypt_cust.overrides.asset_capitalization_class.CustomAssetCapitalization",
 }
 
 # Document Events
