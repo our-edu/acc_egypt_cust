@@ -80,8 +80,25 @@ acc_egypt_cust.journal_entry.fetch_party_name = function (frm, cdt, cdn) {
     });
 };
 
+// ERPNext's update_totals sums floats without rounding (e.g. 9450.640000000001),
+// which breaks "Update After Submit" on submitted entries. Round the totals.
+acc_egypt_cust.journal_entry.patch_update_totals = function (frm) {
+    if (frm.cscript._acc_egypt_cust_totals_patched || !frm.cscript.update_totals) return;
+    const original = frm.cscript.update_totals;
+    frm.cscript.update_totals = function (doc) {
+        original.call(this, doc);
+        const d = locals[doc.doctype][doc.name];
+        d.total_debit = flt(d.total_debit, precision("total_debit"));
+        d.total_credit = flt(d.total_credit, precision("total_credit"));
+        refresh_many(["total_debit", "total_credit"]);
+    };
+    frm.cscript._acc_egypt_cust_totals_patched = true;
+};
+
 frappe.ui.form.on("Journal Entry", {
     refresh(frm) {
+        acc_egypt_cust.journal_entry.patch_update_totals(frm);
+
         frm.set_query("custom_party_type", "accounts", () => ({
             filters: {
                 name: ["in", Object.keys(frappe.boot.party_account_types || {})],
@@ -89,6 +106,16 @@ frappe.ui.form.on("Journal Entry", {
         }));
 
         acc_egypt_cust.journal_entry.load_employee_loan_accounts(frm);
+
+        // Don't touch submitted/cancelled entries on load: setting allow-on-submit
+        // fields here marks the form dirty and forces a needless "Update".
+        if (frm.doc.docstatus !== 0) {
+            frm.fields_dict.accounts.grid.add_custom_button(__("Import from Excel"), () => {
+                _show_import_dialog(frm);
+            });
+            return;
+        }
+
         acc_egypt_cust.journal_entry.backfill_custom_party_fields(frm);
         acc_egypt_cust.journal_entry.sync_all_party_fields(frm);
 
