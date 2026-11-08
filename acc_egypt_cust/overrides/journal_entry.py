@@ -2,6 +2,7 @@ import io
 
 import frappe
 from frappe import _
+from frappe.model.workflow import set_workflow_state_on_action
 
 
 PARTY_ACCOUNT_TYPES = ("Receivable", "Payable")
@@ -41,6 +42,18 @@ def auto_submit_depreciation_entry(doc, method=None):
     if doc.voucher_type == "Depreciation Entry" and doc.docstatus == 0 and doc.meta.get_workflow():
         doc.flags.ignore_permissions = True
         doc.submit()
+
+
+def set_cancelled_workflow_state(doc, method=None):
+    """Frappe skips workflow validation on cancel, so a Journal Entry cancelled from code
+    (e.g. by an Asset / Asset Depreciation Schedule cancel) keeps its submitted workflow
+    state like 'Approved' and still looks active. Move it to the workflow's cancelled state."""
+    workflow = doc.meta.get_workflow()
+    if not workflow:
+        return
+    field = frappe.get_cached_value("Workflow", workflow, "workflow_state_field")
+    set_workflow_state_on_action(doc, workflow, "cancel")
+    doc.db_set(field, doc.get(field), update_modified=False)
 
 
 def _resolve_party_name(party_type, party):

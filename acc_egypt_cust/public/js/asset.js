@@ -43,9 +43,21 @@ frappe.ui.form.on("Asset", {
 		// type except Composite Asset, which stays off until it's capitalized.
 		// Skip entirely when custom_stop_auto_calculate_depreciation is checked or
 		// the asset category is non-depreciable (see set_non_depreciable_category_flag).
-		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
-			frm.set_value("calculate_depreciation", frm.doc.asset_type === "Composite Asset" ? 0 : 1);
+		// erpnext's refresh re-triggers asset_type on every load, before the async
+		// non-depreciable flag is known, so leave a saved, unchanged doc as the server
+		// saved it (overrides/asset.py applies the same rule on every save) - otherwise
+		// the form turns dirty right after each save.
+		if (!frm.is_new() && !frm.is_dirty()) {
+			return;
 		}
+		if (frm.doc.docstatus === 0 && !is_auto_calculate_depreciation_stopped(frm)) {
+			var is_uncapitalized_composite =
+				frm.doc.asset_type === "Composite Asset" && !flt(frm.doc.net_purchase_amount);
+			frm.set_value("calculate_depreciation", is_uncapitalized_composite ? 0 : 1);
+		}
+		// else{
+		// 	frm.set_value("calculate_depreciation", 0);
+		// }
 	},
 	custom_stop_auto_calculate_depreciation: function (frm) {
 		frm.set_value("calculate_depreciation", 0);
