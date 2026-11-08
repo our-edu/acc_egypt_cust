@@ -10,6 +10,9 @@ from erpnext.assets.report.fixed_asset_register import fixed_asset_register as b
 # Moved from their standard position to the end of the report
 TRAILING_COLUMNS = ("cost_center", "department")
 
+# Standard columns removed from this report
+HIDDEN_COLUMNS = ("asset_value",)
+
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
@@ -29,6 +32,11 @@ def execute(filters=None):
 		set_custodian(data)
 
 	chart = base.prepare_chart_data(data, filters) if not group_by else {}
+
+	# Strip hidden values from the rows so they are not sent to the client
+	for row in data:
+		for fieldname in HIDDEN_COLUMNS:
+			row.pop(fieldname, None)
 
 	return columns, data, None, chart
 
@@ -133,7 +141,7 @@ def set_custodian(data):
 
 
 def get_columns(filters, group_by):
-	columns = base.get_columns(filters)
+	columns = [c for c in base.get_columns(filters) if c["fieldname"] not in HIDDEN_COLUMNS]
 
 	net_value_column = {
 		"label": _("Net Value"),
