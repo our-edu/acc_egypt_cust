@@ -845,9 +845,10 @@ filtered_page_data.forEach((row) => {
 });
 
     // Add grand totals row on the last page
-    if (page_number === total_pages && total_row) {
-        let total_debit = total_row.debit || 0;
-        let total_credit = total_row.credit || 0;
+    if (page_number === total_pages && closing_row) {
+        // Use the last row (Closing = Opening + Total) instead of the Total row
+        let total_debit = closing_row.debit || 0;
+        let total_credit = closing_row.credit || 0;
         let closing_balance = closing_row ? (closing_row.balance ?? 0) : 0;
 
         content += `<tr style="background-color:#f0f0f0; font-weight:bold;">`;
