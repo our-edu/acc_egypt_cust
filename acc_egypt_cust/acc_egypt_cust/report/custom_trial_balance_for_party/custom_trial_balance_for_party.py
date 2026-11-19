@@ -125,6 +125,7 @@ def get_data(filters, show_party_name):
 	return data
 
 
+# NOTE: wrapped by oedu_draft_ledger (Include Draft Entries) - keep the name and signature.
 def get_opening_balances(filters, account_filter=None):
 	GL_Entry = frappe.qb.DocType("GL Entry")
 	JEA = frappe.qb.DocType("Journal Entry Account")
@@ -204,6 +205,7 @@ def get_opening_balances(filters, account_filter=None):
 	return opening
 
 
+# NOTE: wrapped by oedu_draft_ledger (Include Draft Entries) - keep the name and signature.
 def get_balances_within_period(filters, account_filter=None):
 	GL_Entry = frappe.qb.DocType("GL Entry")
 	JEA = frappe.qb.DocType("Journal Entry Account")
