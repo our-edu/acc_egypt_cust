@@ -11,6 +11,7 @@ from erpnext.accounts.report.financial_statements import (
 	filter_out_zero_value_rows,
 	set_gl_entries_by_account,
 )
+# NOTE: get_opening_balances is wrapped in this module by oedu_draft_ledger (Include Draft Entries) - keep calling it by this name.
 from erpnext.accounts.report.trial_balance.trial_balance import (
 	accumulate_values_into_parents,
 	calculate_total_row,

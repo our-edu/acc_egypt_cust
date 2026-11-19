@@ -163,6 +163,7 @@ def get_result(filters, account_details):
 	return result
 
 
+# NOTE: wrapped by oedu_draft_ledger (Include Draft Entries) - keep the name and signature.
 def get_gl_entries(filters, accounting_dimensions):
 	currency_map = get_currency(filters)
 	select_fields = """, gle.debit, gle.credit, gle.debit_in_account_currency,
