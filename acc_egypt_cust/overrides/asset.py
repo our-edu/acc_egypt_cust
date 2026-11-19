@@ -112,6 +112,28 @@ def _get_default_salvage_value(doc):
     return flt(frappe.db.get_value("Asset Category", doc.asset_category, "custom_default_salvage_value"))
 
 
+def set_value_after_depreciation(doc, method=None):
+    """Persist Value After Depreciation for an asset that doesn't calculate depreciation.
+
+    erpnext computes it in on_update (set_depr_rate_and_value_after_depreciation), which
+    runs after the row is written and never db_sets it, so only a form save that sends the
+    computed value back stores it. Submitting a doc loaded from the db (list view bulk
+    submit, data import, scripts) or a Composite Asset capitalized just before submit
+    leaves 0. before_submit runs ahead of the db write, so setting it here sticks.
+    Nothing can adjust the value before submit (value adjustments and depreciation
+    entries need a submitted asset), so the formula is always the right value here.
+    """
+    if doc.calculate_depreciation or doc.split_from:
+        return
+
+    doc.value_after_depreciation = flt(
+        flt(doc.net_purchase_amount)
+        - flt(doc.opening_accumulated_depreciation)
+        + flt(doc.additional_asset_cost),
+        doc.precision("value_after_depreciation"),
+    )
+
+
 def cancel_unscheduled_depreciation_entries(doc, method=None):
     """erpnext's Asset cancel only cancels the depreciation entries linked to the active
     depreciation schedule. Entries posted on disposal (e.g. Asset Capitalization submit) and

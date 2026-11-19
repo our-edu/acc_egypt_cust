@@ -223,6 +223,7 @@ doc_events = {
     },
     "Asset": {
         "validate": "acc_egypt_cust.overrides.asset.set_salvage_value",
+        "before_submit": "acc_egypt_cust.overrides.asset.set_value_after_depreciation",
         "on_cancel": "acc_egypt_cust.overrides.asset.cancel_unscheduled_depreciation_entries",
     },
 }
