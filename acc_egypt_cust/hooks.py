@@ -354,3 +354,6 @@ get_entries_for_bank_reconciliation_statement = [
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+override_doctype_dashboards = {
+	"Asset": "acc_egypt_cust.overrides.asset_dashboard.get_dashboard_data",
+}
