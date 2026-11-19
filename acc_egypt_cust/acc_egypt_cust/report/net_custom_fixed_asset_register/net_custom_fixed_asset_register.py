@@ -19,8 +19,8 @@ def execute(filters=None):
 	group_by = filters.get("group_by") in ("Asset Category", "Location")
 
 	columns = get_columns(filters, group_by)
-	data = base.get_data(filters)
 	finance_book = get_finance_book(filters)
+	data = get_data(filters, finance_book)
 
 	if group_by:
 		set_group_net_value(data, filters, finance_book)
@@ -39,6 +39,56 @@ def execute(filters=None):
 			row.pop(fieldname, None)
 
 	return columns, data, None, chart
+
+
+# Status filter options handled by the standard report (asset groups, not exact statuses)
+BASE_STATUS_OPTIONS = ("In Location", "Disposed")
+
+
+def get_asset_status(filters):
+	"""The exact Asset status selected in the Status filter, if any."""
+	status = filters.get("status")
+	if status and status not in BASE_STATUS_OPTIONS:
+		return status
+
+
+def get_base_filters(filters):
+	# The standard report treats any status other than "In Location" as "Disposed",
+	# so hide an exact asset status from it and apply that status here instead.
+	if get_asset_status(filters):
+		return frappe._dict(filters, status=None)
+	return filters
+
+
+def get_conditions(filters):
+	conditions = base.get_conditions(get_base_filters(filters))
+	status = get_asset_status(filters)
+	if status:
+		conditions["status"] = status
+	return conditions
+
+
+def get_data(filters, finance_book):
+	status = get_asset_status(filters)
+	if not status:
+		return base.get_data(filters)
+
+	base_filters = get_base_filters(filters)
+	group_by = frappe.scrub(filters.get("group_by"))
+	if group_by in ("asset_category", "location"):
+		# Same as the standard grouped data, limited to assets with the selected status.
+		# base.get_conditions also sets the period dates on base_filters for the maps below.
+		conditions = base.get_conditions(base_filters)
+		conditions["status"] = status
+		return base.get_group_by_data(
+			group_by,
+			conditions,
+			base.get_assets_linked_to_fb(base_filters),
+			base.get_asset_depreciation_amount_map(base_filters, finance_book),
+			base.get_asset_value_adjustment_map(base_filters, finance_book),
+		)
+
+	return [row for row in base.get_data(base_filters) if row["status"] == status]
 
 
 def get_finance_book(filters):
@@ -93,7 +143,7 @@ def set_group_net_value(data, filters, finance_book):
 	assets_linked_to_fb = base.get_assets_linked_to_fb(filters)
 	assets = frappe.get_all(
 		"Asset",
-		filters=base.get_conditions(filters),
+		filters=get_conditions(filters),
 		fields=["name", "calculate_depreciation", group_field],
 	)
 	# Same asset selection as the standard grouped data
