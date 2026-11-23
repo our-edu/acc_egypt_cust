@@ -92,7 +92,12 @@ def sync_custom_party_to_party(doc, method=None):
             row.party_type = None
             row.party = None
 
-        row.custom_party_name = _resolve_party_name(row.party_type, row.party)
+        # Resolve the display name from the user-entered custom party (same as the
+        # client's fetch_party_name). Using the synced `party` blanked the name on
+        # non-party accounts, so the form refetched it on every load and stayed dirty.
+        row.custom_party_name = _resolve_party_name(
+            row.custom_party_type or row.party_type, row.custom_party or row.party
+        )
 
 
 @frappe.whitelist()
