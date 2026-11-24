@@ -5,3 +5,4 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 acc_egypt_cust.patches.set_cancelled_journal_entry_workflow_state
+acc_egypt_cust.patches.remove_zatca_payment_means_code
