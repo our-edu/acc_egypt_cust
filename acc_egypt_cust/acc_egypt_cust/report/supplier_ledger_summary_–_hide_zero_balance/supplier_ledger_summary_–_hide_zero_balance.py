@@ -3,6 +3,7 @@
 
 
 from frappe.utils import flt
+# NOTE: PartyLedgerSummaryReport is replaced in this module by oedu_draft_ledger (Include Draft Entries) - keep calling it by this name.
 from erpnext.accounts.report.customer_ledger_summary.customer_ledger_summary import (
 	PartyLedgerSummaryReport,
 )
