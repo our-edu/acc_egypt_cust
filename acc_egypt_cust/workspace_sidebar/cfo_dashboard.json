@@ -1,0 +1,29 @@
+{
+ "app": "acc_egypt_cust",
+ "creation": "2026-11-25 13:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace Sidebar",
+ "header_icon": "chart",
+ "idx": 0,
+ "items": [
+  {
+   "child": 0,
+   "collapsible": 1,
+   "icon": "home",
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Home",
+   "link_to": "CFO Dashboard",
+   "link_type": "Workspace",
+   "show_arrow": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-11-25 13:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Acc Egypt Cust",
+ "name": "CFO Dashboard",
+ "owner": "Administrator",
+ "standard": 1,
+ "title": "CFO Dashboard"
+}
