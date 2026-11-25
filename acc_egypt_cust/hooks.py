@@ -54,8 +54,25 @@ fixtures = [
             ["Number Card", "is_standard", "=", 0],
             ["Number Card", "document_type", "in", ["Journal Entry", "Asset"]]
         ]
+    },
+    {
+        "dt": "Role",
+        "filters": [
+            ["name", "in", ["CFO"]]
+        ]
+    },
+    {
+        "dt": "Report",
+        "filters": [
+            ["name", "in", ["Asset Register 360"]]
+        ]
+    },
+    {
+        "dt": "Custom HTML Block",
+        "filters": [
+            ["name", "in", ["Financials", "Fixed Assets 360"]]
+        ]
     }
-
 
 ]
 
