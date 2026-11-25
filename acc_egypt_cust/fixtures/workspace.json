@@ -1020,49 +1020,5 @@
   "shortcuts": [],
   "title": "الحسابات",
   "type": "Workspace"
- },
- {
-  "app": "acc_egypt_cust",
-  "charts": [],
-  "content": "[{\"id\":\"cfoHdr0001\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>CFO Dashboard</b></span>\",\"col\":12}},{\"id\":\"cfoFin0001\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Financials\",\"col\":12}},{\"id\":\"cfoSpc0001\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"cfoFa360001\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"Fixed Assets 360\",\"col\":12}}]",
-  "custom_blocks": [
-   {
-    "custom_block_name": "Financials",
-    "label": "Financials"
-   },
-   {
-    "custom_block_name": "Fixed Assets 360",
-    "label": "Fixed Assets 360"
-   }
-  ],
-  "docstatus": 0,
-  "doctype": "Workspace",
-  "external_link": null,
-  "for_user": "",
-  "hide_custom": 0,
-  "icon": "chart",
-  "indicator_color": null,
-  "is_hidden": 0,
-  "label": "CFO Dashboard",
-  "link_to": null,
-  "link_type": null,
-  "links": [],
-  "modified": "2026-11-25 13:00:00.000000",
-  "module": "Acc Egypt Cust",
-  "name": "CFO Dashboard",
-  "number_cards": [],
-  "parent_page": "",
-  "public": 1,
-  "quick_lists": [],
-  "restrict_to_domain": "",
-  "roles": [
-   {
-    "role": "CFO"
-   }
-  ],
-  "sequence_id": 49.0,
-  "shortcuts": [],
-  "title": "CFO Dashboard",
-  "type": "Workspace"
  }
 ]
