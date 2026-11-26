@@ -375,14 +375,18 @@
    {
     "child": 1,
     "collapsible": 1,
+    "filters": null,
+    "icon": null,
     "indent": 0,
     "keep_closed": 0,
     "label": "Item",
     "link_to": "Item",
     "link_type": "DocType",
-    "parent": "Assets",
+    "navigate_to_tab": null,
+    "route_options": null,
     "show_arrow": 0,
-    "type": "Link"
+    "type": "Link",
+    "url": null
    },
    {
     "child": 1,

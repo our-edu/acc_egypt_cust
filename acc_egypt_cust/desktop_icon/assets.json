@@ -1,17 +1,17 @@
 {
  "app": "acc_egypt_cust",
- "bg_color": "blue",
  "creation": "2025-11-17 20:55:11.845676",
  "docstatus": 0,
  "doctype": "Desktop Icon",
  "hidden": 0,
  "icon": "assets",
+ "icon_image": "/assets/acc_egypt_cust/images/assets_logo.jpg",
  "icon_type": "Link",
  "idx": 1,
  "label": "Assets",
  "link_to": "Assets",
  "link_type": "Workspace Sidebar",
- "modified": "2026-07-22 11:59:31.473892",
+ "modified": "2026-11-26 13:32:08.657314",
  "modified_by": "Administrator",
  "name": "Assets",
  "owner": "Administrator",
@@ -23,6 +23,15 @@
   },
   {
    "role": "Accounts Mid"
+  },
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Knowledge Base Contributor"
+  },
+  {
+   "role": "IT Manager"
   }
  ],
  "standard": 1
